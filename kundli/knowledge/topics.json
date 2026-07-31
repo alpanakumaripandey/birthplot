@@ -1,0 +1,74 @@
+{
+  "career": {
+    "label": "Career & Work",
+    "houses": [10, 6, 2, 11],
+    "planets": ["Sun", "Saturn", "Mercury", "Mars"],
+    "intro": "Career themes are read mainly from the 10th house (profession), supported by the 6th (daily work), 2nd (income skills), and 11th (gains)."
+  },
+  "marriage": {
+    "label": "Marriage & Partnership",
+    "houses": [7, 2, 8, 11],
+    "planets": ["Venus", "Jupiter", "Moon"],
+    "intro": "Marriage and partnership lean on the 7th house and Venus (and Jupiter for traditional blessings), with 2nd/8th/11th adding family and shared-life context."
+  },
+  "love": {
+    "label": "Love & Romance",
+    "houses": [5, 7],
+    "planets": ["Venus", "Moon", "Mars"],
+    "intro": "Romance and attraction are shown by the 5th house (heart), Venus, and how Mars/Moon color desire and feelings."
+  },
+  "health": {
+    "label": "Health & Vitality",
+    "houses": [1, 6, 8],
+    "planets": ["Sun", "Moon", "Mars", "Saturn"],
+    "intro": "Health is judged from Lagna (vitality), 6th (ailments/routine), and 8th (chronic or sudden issues), plus luminaries and Mars/Saturn."
+  },
+  "money": {
+    "label": "Money & Wealth",
+    "houses": [2, 11, 5, 9],
+    "planets": ["Jupiter", "Venus", "Mercury"],
+    "intro": "Wealth themes come from the 2nd (accumulated resources) and 11th (gains), with 5th/9th showing speculative and fortune support."
+  },
+  "education": {
+    "label": "Education & Learning",
+    "houses": [4, 5, 9],
+    "planets": ["Mercury", "Jupiter", "Moon"],
+    "intro": "Learning is seen from Mercury (intellect), Jupiter (wisdom), 4th/5th (formal and creative intelligence), and 9th (higher study)."
+  },
+  "children": {
+    "label": "Children",
+    "houses": [5, 9],
+    "planets": ["Jupiter", "Moon"],
+    "intro": "Children and creative progeny themes center on the 5th house and Jupiter, with Moon showing nurturing capacity."
+  },
+  "home": {
+    "label": "Home & Family",
+    "houses": [4, 2],
+    "planets": ["Moon", "Mars", "Venus"],
+    "intro": "Home, mother, and emotional roots are the 4th house and Moon; 2nd adds family resources and speech at home."
+  },
+  "spirituality": {
+    "label": "Spirituality & Inner Life",
+    "houses": [9, 12, 8],
+    "planets": ["Jupiter", "Ketu", "Saturn"],
+    "intro": "Dharma and inner life come from the 9th (faith), 12th (liberation), 8th (occult depth), Jupiter, and Ketu."
+  },
+  "foreign": {
+    "label": "Foreign Travel & Settling Abroad",
+    "houses": [12, 9, 7, 3],
+    "planets": ["Rahu", "Moon", "Saturn"],
+    "intro": "Foreign connections often involve the 12th/9th houses and Rahu; 7th/3rd can add travel through partnership or short trips that expand."
+  },
+  "father": {
+    "label": "Father & Authority",
+    "houses": [9, 10],
+    "planets": ["Sun", "Jupiter"],
+    "intro": "Father and guiding authority are classically linked to the 9th house and Sun, with 10th showing public/authority impact."
+  },
+  "mother": {
+    "label": "Mother & Emotional Care",
+    "houses": [4],
+    "planets": ["Moon"],
+    "intro": "Mother and emotional nurturing are primarily the Moon and the 4th house."
+  }
+}

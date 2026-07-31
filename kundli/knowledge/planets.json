@@ -1,0 +1,74 @@
+{
+  "Sun": {
+    "sanskrit": "Surya",
+    "karaka": "Soul, father, authority, vitality, ego",
+    "benefic": false,
+    "summary": "Shows confidence, identity, leadership style, and relationship with authority.",
+    "strong_in": ["Leo", "Aries"],
+    "topics": ["career", "father", "health", "status"]
+  },
+  "Moon": {
+    "sanskrit": "Chandra",
+    "karaka": "Mind, mother, emotions, public, comfort",
+    "benefic": true,
+    "summary": "Shows emotional nature, habits, motherly care, and day-to-day mental state.",
+    "strong_in": ["Cancer", "Taurus"],
+    "topics": ["mind", "mother", "home", "health"]
+  },
+  "Mars": {
+    "sanskrit": "Mangala",
+    "karaka": "Energy, courage, siblings, conflict, drive",
+    "benefic": false,
+    "summary": "Shows initiative, aggression, physical energy, and competitive edge.",
+    "strong_in": ["Aries", "Scorpio", "Capricorn"],
+    "topics": ["career", "siblings", "property", "health"]
+  },
+  "Mercury": {
+    "sanskrit": "Budha",
+    "karaka": "Intellect, speech, trade, learning, analysis",
+    "benefic": true,
+    "summary": "Shows thinking style, communication, business sense, and curiosity.",
+    "strong_in": ["Virgo", "Gemini"],
+    "topics": ["education", "career", "communication", "money"]
+  },
+  "Jupiter": {
+    "sanskrit": "Guru",
+    "karaka": "Wisdom, children, fortune, dharma, expansion",
+    "benefic": true,
+    "summary": "Shows blessings, teachers, optimism, ethics, and growth opportunities.",
+    "strong_in": ["Sagittarius", "Pisces", "Cancer"],
+    "topics": ["education", "children", "marriage", "money", "spirituality"]
+  },
+  "Venus": {
+    "sanskrit": "Shukra",
+    "karaka": "Love, marriage, arts, luxury, relationships",
+    "benefic": true,
+    "summary": "Shows taste, attraction, partnerships, comforts, and creative enjoyment.",
+    "strong_in": ["Taurus", "Libra", "Pisces"],
+    "topics": ["marriage", "love", "money", "arts"]
+  },
+  "Saturn": {
+    "sanskrit": "Shani",
+    "karaka": "Discipline, delay, karma, longevity, hard work",
+    "benefic": false,
+    "summary": "Shows responsibility, obstacles that teach, endurance, and long-term structure.",
+    "strong_in": ["Capricorn", "Aquarius", "Libra"],
+    "topics": ["career", "health", "karma", "longevity"]
+  },
+  "Rahu": {
+    "sanskrit": "Rahu",
+    "karaka": "Ambition, foreign, obsession, unconventional path",
+    "benefic": false,
+    "summary": "Shows intense desires, unconventional gains, and areas of worldly craving.",
+    "strong_in": ["Taurus", "Gemini", "Aquarius"],
+    "topics": ["career", "foreign", "ambition", "technology"]
+  },
+  "Ketu": {
+    "sanskrit": "Ketu",
+    "karaka": "Detachment, past karma, spirituality, sudden insight",
+    "benefic": false,
+    "summary": "Shows where you let go, spiritual leanings, and past-life skill themes.",
+    "strong_in": ["Scorpio", "Pisces", "Sagittarius"],
+    "topics": ["spirituality", "detachment", "research", "health"]
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "1": {
+    "name": "Lagna / Self",
+    "themes": ["personality", "body", "vitality", "life direction"],
+    "summary": "Who you are at the core — appearance, temperament, and how life begins for you."
+  },
+  "2": {
+    "name": "Wealth & Speech",
+    "themes": ["money", "family", "speech", "food", "values"],
+    "summary": "Resources, early family support, speech style, and what you value."
+  },
+  "3": {
+    "name": "Courage & Siblings",
+    "themes": ["siblings", "communication", "short travel", "skills", "courage"],
+    "summary": "Effort, siblings, media/writing skills, and day-to-day initiative."
+  },
+  "4": {
+    "name": "Home & Mother",
+    "themes": ["home", "mother", "emotions", "property", "inner peace"],
+    "summary": "Emotional foundation, mother, vehicles, and sense of belonging."
+  },
+  "5": {
+    "name": "Creativity & Children",
+    "themes": ["children", "romance", "creativity", "intelligence", "speculation"],
+    "summary": "Joy, creative output, romance, and intelligence applied with flair."
+  },
+  "6": {
+    "name": "Health & Service",
+    "themes": ["health", "enemies", "service", "debts", "daily work"],
+    "summary": "Routine health, competition, service roles, and problem-solving."
+  },
+  "7": {
+    "name": "Partnership",
+    "themes": ["marriage", "spouse", "business partners", "public dealings"],
+    "summary": "One-to-one bonds — marriage, contracts, and how you meet others halfway."
+  },
+  "8": {
+    "name": "Transformation",
+    "themes": ["longevity", "occult", "shared resources", "sudden change", "research"],
+    "summary": "Deep change, inheritance themes, crises that remake you, and hidden knowledge."
+  },
+  "9": {
+    "name": "Fortune & Dharma",
+    "themes": ["luck", "higher learning", "travel", "father", "beliefs"],
+    "summary": "Grace, teachers, long journeys, and the philosophy that guides you."
+  },
+  "10": {
+    "name": "Career & Status",
+    "themes": ["career", "reputation", "authority", "public image"],
+    "summary": "Profession, achievements, and how the world sees your work."
+  },
+  "11": {
+    "name": "Gains & Networks",
+    "themes": ["income", "friends", "aspirations", "elder siblings", "fulfillment"],
+    "summary": "Gains, social circles, hopes, and results of long-term effort."
+  },
+  "12": {
+    "name": "Loss & Liberation",
+    "themes": ["expenses", "foreign", "spirituality", "isolation", "moksha"],
+    "summary": "Letting go, foreign lands, sleep/dreams, charity, and spiritual release."
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "1": {
+    "name": "Aries",
+    "sanskrit": "Mesha",
+    "element": "Fire",
+    "ruler": "Mars",
+    "nature": "Movable",
+    "summary": "Bold, pioneering energy. Initiative, courage, and a drive to start new things.",
+    "traits": ["assertive", "independent", "impatient", "courageous"]
+  },
+  "2": {
+    "name": "Taurus",
+    "sanskrit": "Vrishabha",
+    "element": "Earth",
+    "ruler": "Venus",
+    "nature": "Fixed",
+    "summary": "Steady, sensual, and value-oriented. Focus on security, comfort, and lasting results.",
+    "traits": ["patient", "practical", "stubborn", "loyal"]
+  },
+  "3": {
+    "name": "Gemini",
+    "sanskrit": "Mithuna",
+    "element": "Air",
+    "ruler": "Mercury",
+    "nature": "Dual",
+    "summary": "Curious and communicative. Learning, networking, and mental agility come naturally.",
+    "traits": ["adaptable", "witty", "restless", "expressive"]
+  },
+  "4": {
+    "name": "Cancer",
+    "sanskrit": "Karka",
+    "element": "Water",
+    "ruler": "Moon",
+    "nature": "Movable",
+    "summary": "Nurturing and emotionally tuned. Home, family, and caretaking themes are strong.",
+    "traits": ["protective", "intuitive", "moody", "caring"]
+  },
+  "5": {
+    "name": "Leo",
+    "sanskrit": "Simha",
+    "element": "Fire",
+    "ruler": "Sun",
+    "nature": "Fixed",
+    "summary": "Warm, creative, and leadership-oriented. Pride, visibility, and self-expression matter.",
+    "traits": ["confident", "generous", "dramatic", "loyal"]
+  },
+  "6": {
+    "name": "Virgo",
+    "sanskrit": "Kanya",
+    "element": "Earth",
+    "ruler": "Mercury",
+    "nature": "Dual",
+    "summary": "Analytical and service-minded. Detail, health, and practical improvement are key.",
+    "traits": ["precise", "helpful", "critical", "organized"]
+  },
+  "7": {
+    "name": "Libra",
+    "sanskrit": "Tula",
+    "element": "Air",
+    "ruler": "Venus",
+    "nature": "Movable",
+    "summary": "Relationship-focused and fair-minded. Balance, beauty, and partnership themes stand out.",
+    "traits": ["diplomatic", "charming", "indecisive", "harmonious"]
+  },
+  "8": {
+    "name": "Scorpio",
+    "sanskrit": "Vrishchika",
+    "element": "Water",
+    "ruler": "Mars",
+    "nature": "Fixed",
+    "summary": "Intense and transformative. Depth, research, and emotional honesty are emphasized.",
+    "traits": ["focused", "private", "resilient", "passionate"]
+  },
+  "9": {
+    "name": "Sagittarius",
+    "sanskrit": "Dhanu",
+    "element": "Fire",
+    "ruler": "Jupiter",
+    "nature": "Dual",
+    "summary": "Expansive and meaning-seeking. Learning, travel, belief, and big-picture vision.",
+    "traits": ["optimistic", "honest", "restless", "philosophical"]
+  },
+  "10": {
+    "name": "Capricorn",
+    "sanskrit": "Makara",
+    "element": "Earth",
+    "ruler": "Saturn",
+    "nature": "Movable",
+    "summary": "Ambitious and disciplined. Long-term goals, status, and structured effort.",
+    "traits": ["responsible", "patient", "reserved", "ambitious"]
+  },
+  "11": {
+    "name": "Aquarius",
+    "sanskrit": "Kumbha",
+    "element": "Air",
+    "ruler": "Saturn",
+    "nature": "Fixed",
+    "summary": "Innovative and community-minded. Ideas, networks, and progressive change.",
+    "traits": ["independent", "humanitarian", "detached", "original"]
+  },
+  "12": {
+    "name": "Pisces",
+    "sanskrit": "Meena",
+    "element": "Water",
+    "ruler": "Jupiter",
+    "nature": "Dual",
+    "summary": "Imaginative and compassionate. Intuition, creativity, and spiritual sensitivity.",
+    "traits": ["empathetic", "artistic", "dreamy", "adaptable"]
+  }
+}

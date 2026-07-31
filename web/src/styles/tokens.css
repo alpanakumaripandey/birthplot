@@ -1,0 +1,99 @@
+:root,
+[data-theme="day"] {
+  --mist: #dce8eb;
+  --mist-deep: #c5d5db;
+  --ink: #1a2428;
+  --ink-soft: #3d4f56;
+  --jade: #1f6f6a;
+  --jade-bright: #2a9a93;
+  --brass: #b08d57;
+  --brass-hot: #c9a66b;
+  --paper: #e4eef0;
+  --paper-glass: rgba(220, 232, 235, 0.72);
+  --line: rgba(26, 36, 40, 0.14);
+  --danger: #9b3d3d;
+  --ok: #1f6f4a;
+  --surface: rgba(200, 218, 223, 0.68);
+  --surface-strong: rgba(195, 214, 220, 0.85);
+  --nav-bg: rgba(197, 213, 219, 0.78);
+  --drawer-bg: linear-gradient(180deg, #d5e4e8 0%, #c5d5db 100%);
+  --hero-veil: linear-gradient(
+    105deg,
+    rgba(185, 203, 207, 0.88) 0%,
+    rgba(197, 213, 219, 0.55) 45%,
+    rgba(176, 141, 87, 0.12) 100%
+  );
+  --body-grad: linear-gradient(165deg, #cfdce2 0%, var(--mist) 38%, #b9cbcf 100%);
+  --selection-bg: rgba(176, 141, 87, 0.45);
+  --scrollbar: #b08d57;
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.5rem;
+  --space-6: 4rem;
+  --space-7: 6rem;
+
+  --radius: 2px;
+  --nav-h: 4rem;
+  --max: 68rem;
+}
+
+[data-theme="ratri"] {
+  --mist: #1a2a2e;
+  --mist-deep: #101a1d;
+  --ink: #e8f0f2;
+  --ink-soft: #a8bdc4;
+  --jade: #3db5ad;
+  --jade-bright: #5fd0c8;
+  --brass: #d4b06a;
+  --brass-hot: #e8c97e;
+  --paper: #162226;
+  --paper-glass: rgba(22, 34, 38, 0.82);
+  --line: rgba(232, 240, 242, 0.14);
+  --danger: #e07070;
+  --ok: #5ecf8e;
+  --surface: rgba(26, 42, 46, 0.75);
+  --surface-strong: rgba(30, 50, 55, 0.9);
+  --nav-bg: rgba(16, 26, 29, 0.88);
+  --drawer-bg: linear-gradient(180deg, #1a2a2e 0%, #101a1d 100%);
+  --hero-veil: linear-gradient(
+    105deg,
+    rgba(16, 26, 29, 0.92) 0%,
+    rgba(26, 42, 46, 0.65) 50%,
+    rgba(212, 176, 106, 0.12) 100%
+  );
+  --body-grad: linear-gradient(165deg, #0c1416 0%, #1a2a2e 45%, #122024 100%);
+  --selection-bg: rgba(212, 176, 106, 0.4);
+  --scrollbar: #d4b06a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+[data-motion="calm"] .rashi-wheel,
+[data-motion="calm"] .logo-orbit,
+[data-motion="calm"] .logo-mark--animated:hover .logo-orbit,
+[data-motion="calm"] .orbit-ring,
+[data-motion="calm"] .glyph-wiggle,
+[data-motion="calm"] .kd-breathe,
+[data-motion="calm"] .star-streak,
+[data-motion="calm"] .seg-now-ping,
+[data-motion="calm"] .tagline-ticker .ticker-line {
+  animation: none !important;
+}
+
+[data-motion="calm"] .tilt-card {
+  transform: none !important;
+}

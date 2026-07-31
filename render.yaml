@@ -1,0 +1,18 @@
+# Birthplot API — deploy on Render (Blueprint or manual Web Service).
+# Free tier sleeps when idle; first request after sleep can take ~30–60s.
+services:
+  - type: web
+    name: birthplot-api
+    runtime: python
+    plan: free
+    region: singapore
+    buildCommand: pip install -r requirements.txt && pip install .
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.8"
+      # Comma-separated UI origins, e.g.
+      # https://birthplot.netlify.app,https://birthplot.pages.dev
+      - key: CORS_ORIGINS
+        sync: false

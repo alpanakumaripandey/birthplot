@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+kundli/.ephemeris/
+web/node_modules/
+web/dist/
+web/.env
+web/.env.local
+*.txt
+!requirements.txt
+.DS_Store
