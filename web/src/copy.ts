@@ -417,17 +417,17 @@ export const COPY = {
   reportAsk: { funky: 'Poochho', seedha: 'Ask', sick: 'Ask' },
 
   summaryTitle: {
-    funky: 'Jyotish summary — dasha, dosha, upaya',
-    seedha: 'Jyotish life summary',
-    sick: 'Jyotish map — timing, dosha, remedies',
+    funky: 'Jyotish reading — ek consult, poori map',
+    seedha: 'Jyotish consult summary',
+    sick: 'One Jyotish consult — full time map',
   },
   summaryLede: {
     funky:
-      'Karma windows, Mahadasha/Antardasha, Manglik notes, aur upaya (mantra / daan / ratna) — kab ghatna, kaise balance.',
+      'Ek flowing reading: dasha, career/wealth, vivah/dosha, health, phir upaya — jaise live Jyotishi baat kare.',
     seedha:
-      'A predictive Vedic map: current dasha windows, career and marriage house lords, Manglik notes, and remedies (mantra, charity, gemstone). Focused on when and how to balance — not only personality.',
+      'One continuous Vedic reading: current dasha, career and wealth, marriage and dosha, health, then remedies — like a live consult, not separate cards.',
     sick:
-      'Dasha clocks, house lords, dosha flags, upaya — when the window opens and how to spiritually steady it.',
+      'One consult scroll: dasha → career/money → marriage/dosha → health → upaya. No card farm.',
   },
   summaryNote: {
     funky: 'Predictive guidance + classical upaya — fate ka rubber stamp nahi. Medical/legal/finance alag.',
@@ -436,9 +436,9 @@ export const COPY = {
     sick: 'Timing + upaya, not destiny stamps. Not medical/legal/finance advice.',
   },
   summaryEmpty: {
-    funky: 'Naye Jyotish summary ke liye chart dubara cast karo.',
-    seedha: 'Re-cast your chart to load the Jyotish-style summary (dasha, dosha, upaya).',
-    sick: 'Re-cast to unlock the dasha–dosha–upaya summary.',
+    funky: 'Naye consult reading ke liye chart dubara cast karo.',
+    seedha: 'Re-cast your chart to load the single Jyotish consult summary.',
+    sick: 'Re-cast to unlock the one-piece consult reading.',
   },
   summaryRemedyFocus: {
     funky: 'Upaya focus grahas:',
