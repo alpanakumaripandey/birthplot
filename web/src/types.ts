@@ -72,13 +72,24 @@ export type LifeArea = {
   planets: string[]
 }
 
+export type LifeSummaryTiming = {
+  label: string
+  range: string
+}
+
+/** Narrative insight panel (new). Older FAQ-shaped items may still exist in saved charts. */
 export type LifeSummaryItem = {
   id: string
-  category: string
-  category_label: string
-  question: string
-  answer: string
+  title?: string
+  kicker?: string
+  insights?: string[]
+  timing?: LifeSummaryTiming[]
   ask_topic: string
+  // legacy FAQ fields
+  category?: string
+  category_label?: string
+  question?: string
+  answer?: string
   timing_hint?: string
 }
 

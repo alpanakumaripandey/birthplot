@@ -1,28 +1,15 @@
-import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { DetailDrawer } from '../components/DetailDrawer'
 import { ReportGate } from '../components/ReportGate'
 import { useChart } from '../ChartContext'
 import { useLingo } from '../hooks/useLingo'
 import { useReveal } from '../hooks/useReveal'
-import type { LifeSummaryItem } from '../types'
-
-const CATEGORY_ORDER = ['career', 'love', 'life'] as const
 
 export function ReportSummary() {
   const { report } = useChart()
   const { t } = useLingo()
   const revealRef = useReveal<HTMLDivElement>()
-  const [open, setOpen] = useState<LifeSummaryItem | null>(null)
-
-  const grouped = useMemo(() => {
-    const items = report?.interpretation.life_summary ?? []
-    return CATEGORY_ORDER.map((cat) => ({
-      id: cat,
-      label: items.find((i) => i.category === cat)?.category_label ?? cat,
-      items: items.filter((i) => i.category === cat),
-    })).filter((g) => g.items.length)
-  }, [report])
+  const panels = report?.interpretation.life_summary ?? []
+  const isInsightPanel = panels.some((p) => Array.isArray(p.insights) && p.insights.length > 0)
 
   return (
     <ReportGate>
@@ -34,7 +21,7 @@ export function ReportSummary() {
             <p className="summary-note">{t('summaryNote')}</p>
           </header>
 
-          {!grouped.length ? (
+          {!isInsightPanel ? (
             <div className="empty-panel">
               <p>{t('summaryEmpty')}</p>
               <Link className="btn" to="/cast">
@@ -42,58 +29,45 @@ export function ReportSummary() {
               </Link>
             </div>
           ) : (
-            grouped.map((group) => (
-              <section key={group.id} className="summary-group" aria-labelledby={`sum-${group.id}`}>
-                <h2 id={`sum-${group.id}`}>{group.label}</h2>
-                <div className="summary-list">
-                  {group.items.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      className="summary-card"
-                      onClick={() => setOpen(item)}
-                    >
-                      <span className="summary-q">{item.question}</span>
-                      {item.timing_hint ? (
-                        <span className="summary-timing">{item.timing_hint}</span>
-                      ) : null}
-                      <span className="summary-preview">
-                        {item.answer.slice(0, 140)}
-                        {item.answer.length > 140 ? '…' : ''}
-                      </span>
-                      <span className="summary-cta">{t('summaryOpen')}</span>
-                    </button>
-                  ))}
-                </div>
-              </section>
-            ))
+            <div className="summary-panels">
+              {panels.map((panel) => (
+                <article key={panel.id} className="summary-insight">
+                  <header className="summary-insight-head">
+                    <h2>{panel.title}</h2>
+                    <p className="summary-kicker">{panel.kicker}</p>
+                  </header>
+
+                  {panel.timing?.length ? (
+                    <div className="summary-timing-row" aria-label="Timing windows">
+                      {panel.timing.map((titem) => (
+                        <span key={`${titem.label}-${titem.range}`} className="summary-chip">
+                          <strong>{titem.label}</strong>
+                          <span>{titem.range}</span>
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  <div className="summary-insights">
+                    {(panel.insights ?? []).map((para) => (
+                      <p key={para.slice(0, 48)}>{para}</p>
+                    ))}
+                  </div>
+
+                  <p className="summary-insight-foot">
+                    <Link to={`/report/ask?topic=${encodeURIComponent(panel.ask_topic)}`}>
+                      {t('summaryAskMore')}
+                    </Link>
+                  </p>
+                </article>
+              ))}
+            </div>
           )}
 
           <p className="summary-foot">
             {t('summaryAskHint')}{' '}
             <Link to="/report/ask">{t('summaryAskLink')}</Link>
           </p>
-
-          <DetailDrawer
-            open={!!open}
-            title={open?.question ?? ''}
-            subtitle={open?.timing_hint || open?.category_label}
-            onClose={() => setOpen(null)}
-          >
-            {open && (
-              <>
-                <p className="summary-drawer-answer">{open.answer}</p>
-                <p style={{ marginTop: '1.25rem' }}>
-                  <Link
-                    className="btn"
-                    to={`/report/ask?topic=${encodeURIComponent(open.ask_topic)}`}
-                  >
-                    {t('summaryAskMore')}
-                  </Link>
-                </p>
-              </>
-            )}
-          </DetailDrawer>
         </div>
       )}
     </ReportGate>

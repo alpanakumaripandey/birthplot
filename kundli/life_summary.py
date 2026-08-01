@@ -1,9 +1,9 @@
-"""Life Summary: plain-language answers to common life questions from chart + dasha."""
+"""Life Summary: visible life insights from chart + dasha (not a FAQ)."""
 
 from __future__ import annotations
 
 from datetime import datetime
-from typing import List, Optional, Set, Tuple
+from typing import List, Set, Tuple
 
 from kundli.chart import KundliChart
 from kundli.dasha import DashaPeriod, DashaTimeline, _antardashas
@@ -24,6 +24,21 @@ SIGN_CAREER = {
     "Pisces": "arts, healing, film, spirituality-adjacent work, charity, design, or imaginative service",
 }
 
+SIGN_STYLE = {
+    "Aries": "direct and ready to begin",
+    "Taurus": "steady and loyal once trust is there",
+    "Gemini": "curious and needs mental connection",
+    "Cancer": "caring, protective, and home-oriented",
+    "Leo": "warm-hearted and wanting appreciation",
+    "Virgo": "careful, helpful, and detail-minded",
+    "Libra": "fair, diplomatic, and partnership-oriented",
+    "Scorpio": "deep, private, and intensely loyal",
+    "Sagittarius": "honest, open, and big-picture",
+    "Capricorn": "serious, responsible, and long-term focused",
+    "Aquarius": "independent and needs space inside closeness",
+    "Pisces": "gentle, imaginative, and emotionally tuned",
+}
+
 PLANET_FEEL = {
     "Sun": "visibility and leadership",
     "Moon": "emotional safety and care",
@@ -32,7 +47,7 @@ PLANET_FEEL = {
     "Jupiter": "growth, guidance, and good support",
     "Venus": "harmony, love, and ease with people",
     "Saturn": "patience, duty, and slow solid results",
-    "Rahu": "ambition, foreign/new paths, and bigger appetite for change",
+    "Rahu": "ambition, foreign or unconventional paths",
     "Ketu": "release, focus, and looking inward",
 }
 
@@ -67,7 +82,6 @@ def _windows_for(
     topic_key: str,
     limit: int = 3,
 ) -> List[Tuple[str, str]]:
-    """Return [(label, range_text), ...] favorable-ish windows for a topic."""
     relevant = _topic_lords(chart, topic_key)
     now = _now(timeline)
     out: List[Tuple[str, str]] = []
@@ -89,7 +103,6 @@ def _windows_for(
         for maha in timeline.mahadashas:
             if maha.start <= timeline.current_mahadasha.start:
                 continue
-            # Peek antars in next maha for nearer windows
             if _hits(maha.lord, relevant, topic_key):
                 out.append(("Longer chapter", _fmt(maha)))
             else:
@@ -103,54 +116,53 @@ def _windows_for(
     return out[:limit]
 
 
-def _window_sentence(windows: List[Tuple[str, str]], soft: str) -> str:
+def _timing_line(windows: List[Tuple[str, str]], quiet: str) -> str:
     if not windows:
-        return soft
+        return quiet
     bits = [f"{label.lower()} ({rng})" for label, rng in windows]
     if len(bits) == 1:
-        return f"A useful timing window is {bits[0]}."
-    return "Useful timing windows: " + "; ".join(bits) + "."
+        return f"A clear timing window shows up {bits[0]}."
+    return "Timing windows that stand out: " + "; ".join(bits) + "."
 
 
-def _item(
+def _panel(
     *,
     id: str,
-    category: str,
-    category_label: str,
-    question: str,
-    answer: str,
+    title: str,
+    kicker: str,
+    insights: List[str],
+    timing: List[dict],
     ask_topic: str,
-    timing_hint: str = "",
 ) -> dict:
     return {
         "id": id,
-        "category": category,
-        "category_label": category_label,
-        "question": question,
-        "answer": answer,
+        "title": title,
+        "kicker": kicker,
+        "insights": insights,
+        "timing": timing,
         "ask_topic": ask_topic,
-        "timing_hint": timing_hint,
     }
 
 
 def build_life_summary(chart: KundliChart, timeline: DashaTimeline) -> List[dict]:
-    """FAQ-style summary answers for the Report Summary page."""
+    """Three insight panels: career/money, love, life path — narrative, not FAQ."""
     h10 = chart.houses[9]
     h7 = chart.houses[6]
     h5 = chart.houses[4]
     h6 = chart.houses[5]
     h11 = chart.houses[10]
-    h12 = chart.houses[11]
     h9 = chart.houses[8]
+    h12 = chart.houses[11]
     venus = chart.planets["Venus"]
     jupiter = chart.planets["Jupiter"]
     saturn = chart.planets["Saturn"]
     rahu = chart.planets["Rahu"]
-    sun = chart.planets["Sun"]
-    mercury = chart.planets["Mercury"]
     mars = chart.planets["Mars"]
 
     career_field = SIGN_CAREER.get(h10.rashi_name, "roles that match your steady strengths")
+    partner_style = SIGN_STYLE.get(h7.rashi_name, "selective about closeness")
+    lagna_style = SIGN_STYLE.get(chart.lagna.rashi_name, "your own pace")
+
     career_wins = _windows_for(chart, timeline, "career")
     money_wins = _windows_for(chart, timeline, "money")
     marriage_wins = _windows_for(chart, timeline, "marriage")
@@ -158,287 +170,147 @@ def build_life_summary(chart: KundliChart, timeline: DashaTimeline) -> List[dict
     foreign_wins = _windows_for(chart, timeline, "foreign")
     health_wins = _windows_for(chart, timeline, "health")
     child_wins = _windows_for(chart, timeline, "children")
-    spirit_wins = _windows_for(chart, timeline, "spirituality")
 
-    career_hint = career_wins[0][1] if career_wins else ""
-    marriage_hint = marriage_wins[0][1] if marriage_wins else ""
-    money_hint = money_wins[0][1] if money_wins else ""
-
-    # Business vs job: Mars/Sun/Saturn/Rahu in career houses lean entrepreneurial vs stable
     career_planets = set(h10.planets) | set(h6.planets) | set(h11.planets)
     business_lean = bool(career_planets & {"Mars", "Sun", "Rahu", "Mercury"})
     job_lean = bool(career_planets & {"Saturn", "Moon", "Jupiter"}) or not career_planets
-
-    # Love vs arranged lean: Venus/5th freer romance; Jupiter/Saturn/7th more traditional framing
-    romance_lean = venus.house in (5, 7) or "Venus" in h5.planets or "Moon" in h5.planets
-    traditional_lean = jupiter.house in (7, 9) or saturn.house in (7, 2) or "Jupiter" in h7.planets
-
-    # Abroad lean
     abroad_lean = (
         rahu.house in (9, 12, 7, 3)
         or bool(h12.planets)
         or bool({"Rahu", "Moon", "Venus"} & set(h9.planets))
     )
-
-    # Heavy cycle: Saturn/Rahu current
+    romance_lean = venus.house in (5, 7) or "Venus" in h5.planets or "Moon" in h5.planets
+    traditional_lean = jupiter.house in (7, 9) or saturn.house in (7, 2) or "Jupiter" in h7.planets
     heavy = False
     if timeline.current_mahadasha and timeline.current_antardasha:
         heavy = timeline.current_mahadasha.lord in {"Saturn", "Rahu", "Ketu"} or (
             timeline.current_antardasha.lord in {"Saturn", "Rahu", "Ketu"}
         )
 
-    items: List[dict] = []
+    # --- Career & Finance panel ---
+    if business_lean and not job_lean:
+        path_line = (
+            "Visible lean: more self-driven paths — business, freelancing, or high-ownership roles — "
+            "fit better than a purely quiet desk track."
+        )
+    elif business_lean and job_lean:
+        path_line = (
+            "Visible lean: both employment and enterprise can work. A hybrid (stable role + side build) "
+            "is often the smartest bridge."
+        )
+    else:
+        path_line = (
+            "Visible lean: steady employment and growing inside a system first. "
+            "Business can wait until skills, savings, and a clear niche are ready."
+        )
 
-    # --- Career & Finance ---
-    items.append(
-        _item(
-            id="career-field",
-            category="career",
-            category_label="Career & Finance",
-            question="What career field best aligns with my natural talents?",
-            answer=(
-                f"Your work style points toward {career_field}. "
-                f"The tone of your career house feels shaped by {h10.rashi_name}"
-                + (
-                    f", with {', '.join(h10.planets)} adding extra color."
-                    if h10.planets
-                    else ", with quieter support from the sign itself."
-                )
-                + f" Roles that use {PLANET_FEEL.get(sun.name, 'confidence')} and "
-                f"{PLANET_FEEL.get(mercury.name, 'clear thinking')} tend to fit you better than forced paths."
-            ),
-            ask_topic="career",
+    if abroad_lean:
+        abroad_line = (
+            "Foreign study, remote global work, or living abroad shows up as a realistic theme — "
+            + _timing_line(foreign_wins, "keep skills and documents ready for when a clean door opens.")
         )
-    )
-    items.append(
-        _item(
-            id="career-promotion",
-            category="career",
-            category_label="Career & Finance",
-            question="When is a favorable time to switch jobs or ask for a promotion?",
-            answer=(
-                "Jyotish cannot promise a promotion date — it shows when career momentum is more supportive. "
-                + _window_sentence(
-                    career_wins,
-                    "Near-term career timing looks steadier than dramatic; prepare quietly and move when a clear offer appears.",
-                )
-                + " Before asking, line up proof of your impact and one clear ask."
-            ),
-            ask_topic="career",
-            timing_hint=career_hint,
+    else:
+        abroad_line = (
+            "Abroad is possible but not the loudest theme. Short programs, remote clients, "
+            "or a later move may fit better than forcing an immediate relocation."
         )
-    )
-    items.append(
-        _item(
-            id="career-business",
-            category="career",
-            category_label="Career & Finance",
-            question="Should I start my own business or stick to employment?",
-            answer=(
-                (
-                    "Your chart leans a bit more toward initiative and self-driven paths — business, freelancing, "
-                    "or a high-ownership role inside a company can fit, especially if you like building something."
-                    if business_lean and not job_lean
-                    else (
-                        "Your chart supports both, with a slight lean toward entrepreneurial or high-agency roles. "
-                        "A hybrid (job + side project) can be a wise bridge."
-                        if business_lean and job_lean
-                        else "Your chart leans toward steady employment, structure, and growing inside a system first. "
-                        "Business can still work later once skills, savings, and a niche are solid."
-                    )
-                )
-                + " Decide with cash runway and one customer need — not only excitement."
-            ),
-            ask_topic="career",
-        )
-    )
-    items.append(
-        _item(
-            id="career-abroad",
-            category="career",
-            category_label="Career & Finance",
-            question="Do I have strong alignments for studying or working abroad?",
-            answer=(
-                (
-                    "Yes — foreign study, remote global work, or living abroad shows up as a realistic theme in your chart. "
-                    if abroad_lean
-                    else "Abroad is possible, but your chart does not shout it as the main path. Short programs, remote clients, "
-                    "or later relocation may fit better than forcing an immediate move. "
-                )
-                + _window_sentence(
-                    foreign_wins,
-                    "Keep documents and skills ready so you can move when a clean opportunity appears.",
-                )
-            ),
-            ask_topic="foreign",
-            timing_hint=foreign_wins[0][1] if foreign_wins else "",
-        )
-    )
-    items.append(
-        _item(
-            id="money-struggle",
-            category="career",
-            category_label="Career & Finance",
-            question="When will my current financial struggles ease?",
-            answer=(
-                "Money chapters ease in waves, not overnight. "
-                + _window_sentence(
-                    money_wins,
-                    "The near term looks better for budgeting and skill-building than sudden windfalls.",
-                )
-                + f" Your gains house sits in {h11.rashi_name}"
-                + (
-                    f" with {', '.join(h11.planets)} — focus on income streams that match that tone."
-                    if h11.planets
-                    else " — focus on one reliable income stream before adding risk."
-                )
-            ),
-            ask_topic="money",
-            timing_hint=money_hint,
-        )
-    )
-    items.append(
-        _item(
-            id="money-invest",
-            category="career",
-            category_label="Career & Finance",
-            question="What are better periods for me to invest in stocks or real estate?",
-            answer=(
-                "This is educational timing color, not financial advice. "
-                + _window_sentence(
-                    money_wins,
-                    "Prefer long-term SIPs and learning over timing the market right now.",
-                )
-                + (
-                    f" Saturn’s patience theme ({PLANET_FEEL['Saturn']}) suggests slow compounding beats speculation."
-                    if saturn.house in (2, 8, 11, 10)
-                    else " Keep emergency savings first; invest only money you can leave untouched for years."
-                )
-            ),
-            ask_topic="money",
-            timing_hint=money_hint,
-        )
+
+    career_timing = [{"label": label, "range": rng} for label, rng in (career_wins or money_wins)[:3]]
+    career_kicker = (
+        f"Work gifts lean toward {career_field.split(',')[0].strip()}"
+        + (f" · timing {career_wins[0][1]}" if career_wins else "")
     )
 
-    # --- Love & Marriage ---
-    items.append(
-        _item(
-            id="marriage-when",
-            category="love",
-            category_label="Love & Marriage",
-            question="When might I meet a life partner or move toward marriage?",
-            answer=(
-                "Charts show favorable windows for commitment — not a guaranteed wedding date. "
-                + _window_sentence(
-                    marriage_wins or love_wins,
-                    "The next clearer partnership chapter may arrive with a later timing shift; keep dating intentional, not desperate.",
-                )
-                + f" Your partnership style feels shaped by {h7.rashi_name}"
-                + (
-                    f", with {', '.join(h7.planets)} active in that space."
-                    if h7.planets
-                    else "."
-                )
-            ),
-            ask_topic="marriage",
-            timing_hint=marriage_hint or (love_wins[0][1] if love_wins else ""),
-        )
-    )
-    items.append(
-        _item(
-            id="marriage-compat",
-            category="love",
-            category_label="Love & Marriage",
-            question="Am I structurally compatible with a serious partner?",
-            answer=(
-                f"You tend to need a partner who respects that you are "
-                f"{'warm and relationship-oriented' if venus.house in (1, 4, 5, 7, 10) else 'selective about closeness'}"
-                f", with emotional safety around {PLANET_FEEL['Moon']}. "
-                f"Compatibility grows when both people share fairness, humor, and clear talk — "
-                f"your chart rewards honesty more than perfect matching on paper. "
-                f"For a named partner, cast both charts together in a full matching session; "
-                f"this summary speaks to your side of the bond."
-            ),
-            ask_topic="marriage",
-        )
-    )
-    items.append(
-        _item(
-            id="marriage-path",
-            category="love",
-            category_label="Love & Marriage",
-            question="Does my chart lean toward love marriage or arranged marriage?",
-            answer=(
-                (
-                    "Your chart leans more toward love / choice-led partnership — attraction and personal connection matter a lot."
-                    if romance_lean and not traditional_lean
-                    else (
-                        "Your chart can support either path. Love may start the story; family blessing or formal steps may still matter."
-                        if romance_lean and traditional_lean
-                        else (
-                            "Your chart leans a bit more toward traditional or family-supported paths, "
-                            "though a love match can still work if values and timing align."
-                            if traditional_lean
-                            else "Either path can work — what matters more is shared values and timing, not the label."
-                        )
-                    )
-                )
-                + " Choose the route that keeps dignity for everyone involved."
-            ),
-            ask_topic="marriage",
-        )
-    )
-    items.append(
-        _item(
-            id="marriage-pattern",
-            category="love",
-            category_label="Love & Marriage",
-            question="Why might my relationships repeat the same pattern?",
-            answer=(
-                f"Repeating patterns often mirror what you seek and what you fear. "
-                f"With Venus emphasizing {PLANET_FEEL['Venus']} from house {venus.house}, "
-                f"and Mars showing {PLANET_FEEL['Mars']} from house {mars.house}, "
-                f"you may swing between wanting closeness and needing space — or between idealizing and testing trust. "
-                f"The pattern softens when you name your need early, slow the rush, and pick partners whose actions match their words."
-            ),
-            ask_topic="love",
-        )
-    )
-    items.append(
-        _item(
-            id="marriage-conflict",
-            category="love",
-            category_label="Love & Marriage",
-            question="How can I ease ongoing conflicts in my marriage or partnership?",
-            answer=(
-                "Conflict cools with structure: one issue at a time, no scorekeeping, and a weekly check-in. "
-                f"Your chart responds well to {PLANET_FEEL['Mercury']} — say the need plainly — "
-                f"and {PLANET_FEEL['Venus']} — repair with warmth after hard talks. "
-                "If fights loop on the same wound, pause the topic for 24 hours, then return with one request each. "
-                "For deep stuck conflict, a counselor plus kind timing beats winning the argument."
-            ),
-            ask_topic="marriage",
-        )
-    )
+    career_insights = [
+        (
+            f"What stands out for career: your natural talents point toward {career_field}. "
+            f"The tone feels shaped by {h10.rashi_name}"
+            + (
+                f", with {', '.join(h10.planets)} adding extra color in that space."
+                if h10.planets
+                else "."
+            )
+        ),
+        (
+            "On growth and moves: "
+            + _timing_line(
+                career_wins,
+                "near-term career energy looks steadier than dramatic — prepare quietly, then move when an offer is clear.",
+            )
+            + " Those windows are useful for promotions, role changes, or a careful job switch."
+        ),
+        path_line,
+        abroad_line,
+        (
+            "On money: "
+            + _timing_line(
+                money_wins,
+                "this stretch favors budgeting and skill-led income over sudden windfalls.",
+            )
+            + f" Gains themes sit in {h11.rashi_name}"
+            + (
+                f" with {', '.join(h11.planets)} — choose income streams that match that tone."
+                if h11.planets
+                else " — one reliable stream before adding risk."
+            )
+            + " For stocks or property, treat timing as a weather hint only: slow compounding and savings first, not speculation."
+        ),
+    ]
 
-    # --- Life path, health, family ---
-    items.append(
-        _item(
-            id="life-purpose",
-            category="life",
-            category_label="Life Path, Health & Family",
-            question="What is my true soul purpose or karmic path in this lifetime?",
-            answer=(
-                f"A simple reading of purpose: grow through {PLANET_FEEL.get(chart.planets['Ketu'].name, 'inner focus')} "
-                f"while offering the world your {h10.rashi_name}-toned work gifts ({career_field}). "
-                f"Your rising sign {chart.lagna.rashi_name} asks you to live more as that energy — "
-                f"not as someone else’s script. Purpose feels quieter when you serve, learn, and keep promises; "
-                f"it feels louder when you chase only status."
-            ),
-            ask_topic="spirituality",
-            timing_hint=spirit_wins[0][1] if spirit_wins else "",
+    # --- Love & Marriage panel ---
+    partner_wins = marriage_wins or love_wins
+    if romance_lean and not traditional_lean:
+        path_love = (
+            "The chart leans toward choice-led / love-led partnership — personal connection matters a lot."
         )
+    elif romance_lean and traditional_lean:
+        path_love = (
+            "Both paths can work: love may start the story, while family blessing or formal steps still matter."
+        )
+    elif traditional_lean:
+        path_love = (
+            "There is a lean toward traditional or family-supported paths, though a love match can still work "
+            "when values and timing align."
+        )
+    else:
+        path_love = "Either love or arranged routes can work — shared values and timing matter more than the label."
+
+    love_kicker = (
+        f"Partnership style: {partner_style}"
+        + (f" · window {partner_wins[0][1]}" if partner_wins else "")
     )
+    love_insights = [
+        (
+            f"What stands out in relationships: you tend to show up as {partner_style}. "
+            f"Close bonds ask for trust, fairness, and everyday give-and-take"
+            + (
+                f" — with {', '.join(h7.planets)} active in that space."
+                if h7.planets
+                else "."
+            )
+        ),
+        (
+            "On meeting someone or moving toward commitment: charts show supportive windows, not a fixed wedding date. "
+            + _timing_line(
+                partner_wins,
+                "the next clearer partnership chapter may arrive with a later timing shift — date with intention, not pressure.",
+            )
+        ),
+        path_love,
+        (
+            f"A repeating pattern often mirrors Venus ({PLANET_FEEL['Venus']}, house {venus.house}) "
+            f"and Mars ({PLANET_FEEL['Mars']}, house {mars.house}): wanting closeness while also needing space, "
+            f"or swinging between idealizing and testing trust. The pattern softens when needs are named early "
+            f"and partners are chosen for actions that match their words."
+        ),
+        (
+            "When conflict loops: one issue at a time, no scorekeeping, and a weekly check-in. "
+            f"Plain talk ({PLANET_FEEL['Mercury']}) plus warm repair ({PLANET_FEEL['Venus']}) cools most storms faster than winning the argument."
+        ),
+    ]
+    love_timing = [{"label": label, "range": rng} for label, rng in partner_wins[:3]]
+
+    # --- Life path / health / family ---
     shift_windows: List[Tuple[str, str]] = []
     if timeline.current_antardasha and timeline.antardashas_in_current:
         for a in timeline.antardashas_in_current:
@@ -452,82 +324,86 @@ def build_life_summary(chart: KundliChart, timeline: DashaTimeline) -> List[dict
                 shift_windows.append(("Next longer chapter", _fmt(m)))
                 break
 
-    items.append(
-        _item(
-            id="life-heavy",
-            category="life",
-            category_label="Life Path, Health & Family",
-            question="Why does life feel heavy right now, and when might this cycle shift?",
-            answer=(
-                (
-                    "This chapter can feel heavier because timing is asking for patience, release, or a rethink of old goals — "
-                    "not because you failed. "
-                    if heavy
-                    else "Even outside a classic ‘heavy’ chapter, stress piles up when rest and meaning run low. "
-                )
-                + (
-                    f"Current chapter flavor: {PLANET_FEEL.get(timeline.current_mahadasha.lord, 'mixed')} "
-                    f"with {PLANET_FEEL.get(timeline.current_antardasha.lord, 'mixed')} in the shorter window "
-                    f"({_fmt(timeline.current_antardasha)}). "
-                    if timeline.current_mahadasha and timeline.current_antardasha
-                    else ""
-                )
-                + _window_sentence(
-                    shift_windows,
-                    "The tone usually softens as the next shorter chapter begins — keep basics (sleep, support, one goal).",
-                )
-            ),
-            ask_topic="spirituality",
-        )
+    life_kicker = (
+        f"Life tone: {lagna_style}"
+        + (" · a heavier chapter asking for patience" if heavy else " · build and clarify")
     )
-    items.append(
-        _item(
-            id="health-watch",
-            category="life",
-            category_label="Life Path, Health & Family",
-            question="What health themes should I watch out for?",
-            answer=(
-                "This is reflective guidance, not a diagnosis. "
-                f"Your vitality house themes sit around {h6.rashi_name}"
-                + (
-                    f" with {', '.join(h6.planets)} — so stress, routine, and recovery deserve attention."
-                    if h6.planets
-                    else " — so daily routine, digestion/stress balance, and sleep deserve attention."
-                )
-                + f" Protect {PLANET_FEEL['Moon']} (rest and mood) and avoid ignoring small warning signs. "
-                + _window_sentence(
-                    health_wins,
-                    "Keep checkups and gentle exercise steady year-round.",
-                )
-            ),
-            ask_topic="health",
-            timing_hint=health_wins[0][1] if health_wins else "",
-        )
-    )
-    items.append(
-        _item(
-            id="children-when",
-            category="life",
-            category_label="Life Path, Health & Family",
-            question="When might conception or children themes become more supported?",
-            answer=(
-                "Charts can suggest supportive windows for children themes — they cannot promise conception. "
-                "Please combine this with medical guidance. "
-                + _window_sentence(
-                    child_wins,
-                    "Near-term children timing looks quieter; focus on health and partnership readiness first.",
-                )
-                + f" Your creativity/children house sits in {h5.rashi_name}"
-                + (
-                    f" with {', '.join(h5.planets)}."
-                    if h5.planets
-                    else "."
-                )
-                + f" Jupiter’s growth theme from house {jupiter.house} also colors this story."
-            ),
-            ask_topic="children",
-            timing_hint=child_wins[0][1] if child_wins else "",
-        )
-    )
+    life_insights = [
+        (
+            f"Soul-path sketch: live more as {chart.lagna.rashi_name} energy ({lagna_style}), "
+            f"offer the world your {h10.rashi_name}-toned work gifts, and grow through "
+            f"{PLANET_FEEL.get('Ketu', 'inner focus')}. Purpose feels quieter when you serve and keep promises; "
+            f"louder when you chase only status."
+        ),
+        (
+            (
+                "Why life can feel heavy now: this chapter asks for patience, release, or a rethink of old goals — "
+                "not proof that you failed. "
+                if heavy
+                else "Even in a milder chapter, life feels heavy when rest and meaning run low. "
+            )
+            + (
+                f"Current flavor mixes {PLANET_FEEL.get(timeline.current_mahadasha.lord, 'mixed')} "
+                f"with {PLANET_FEEL.get(timeline.current_antardasha.lord, 'mixed')} "
+                f"({_fmt(timeline.current_antardasha)}). "
+                if timeline.current_mahadasha and timeline.current_antardasha
+                else ""
+            )
+            + _timing_line(
+                shift_windows,
+                "The tone usually softens as the next shorter chapter begins — protect sleep, support, and one clear goal.",
+            )
+        ),
+        (
+            "Health themes to watch (reflective, not medical): "
+            f"routine and recovery around {h6.rashi_name}"
+            + (
+                f" with {', '.join(h6.planets)}"
+                if h6.planets
+                else ""
+            )
+            + f". Guard {PLANET_FEEL['Moon']} — mood and rest — and don’t ignore small warning signs. "
+            + _timing_line(health_wins, "Keep checkups and gentle movement steady year-round.")
+        ),
+        (
+            "Children / family growth: supportive windows can appear, but conception is never guaranteed by a chart — "
+            "pair this with medical guidance. "
+            + _timing_line(
+                child_wins,
+                "Near-term children timing looks quieter; health and partnership readiness come first.",
+            )
+            + f" Creativity and children themes sit in {h5.rashi_name}"
+            + (f" with {', '.join(h5.planets)}." if h5.planets else ".")
+        ),
+    ]
+    life_timing = [
+        {"label": label, "range": rng}
+        for label, rng in (shift_windows + health_wins + child_wins)[:3]
+    ]
 
-    return items
+    return [
+        _panel(
+            id="career",
+            title="Career & Finance",
+            kicker=career_kicker,
+            insights=career_insights,
+            timing=career_timing,
+            ask_topic="career",
+        ),
+        _panel(
+            id="love",
+            title="Love & Relationships",
+            kicker=love_kicker,
+            insights=love_insights,
+            timing=love_timing,
+            ask_topic="marriage",
+        ),
+        _panel(
+            id="life",
+            title="Life Path, Health & Family",
+            kicker=life_kicker,
+            insights=life_insights,
+            timing=life_timing,
+            ask_topic="spirituality",
+        ),
+    ]

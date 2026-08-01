@@ -2557,87 +2557,85 @@ select {
   color: var(--ink-soft);
 }
 
-.summary-group {
-  margin: var(--space-5) 0;
-}
-
-.summary-group h2 {
-  font-family: var(--font-display);
-  font-size: clamp(1.25rem, 2.2vw, 1.55rem);
-  margin: 0 0 0.85rem;
-}
-
-.summary-list {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.summary-card {
+.summary-panels {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 0.4rem;
-  text-align: left;
-  width: 100%;
-  padding: 1rem 1.1rem;
+  gap: var(--space-5);
+  margin: var(--space-4) 0;
+}
+
+.summary-insight {
   border: 1px solid var(--line);
   background: var(--surface-strong);
-  cursor: pointer;
-  color: inherit;
-  font: inherit;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  padding: 1.25rem 1.35rem 1.15rem;
 }
 
-.summary-card:hover {
-  border-color: var(--brass);
-}
-
-.summary-q {
+.summary-insight-head h2 {
   font-family: var(--font-display);
-  font-size: 1.05rem;
-  line-height: 1.35;
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+  margin: 0 0 0.35rem;
+}
+
+.summary-kicker {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--brass);
   font-weight: 600;
 }
 
-.summary-timing {
-  font-size: 0.78rem;
+.summary-timing-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.9rem 0 1rem;
+}
+
+.summary-chip {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 0.8rem;
+  line-height: 1.3;
+}
+
+.summary-chip strong {
+  color: var(--jade);
+  font-size: 0.72rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--jade);
-  font-weight: 700;
 }
 
-.summary-preview {
+.summary-insights {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.summary-insights p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.summary-insight-foot {
+  margin: 1.1rem 0 0;
   font-size: 0.9rem;
-  color: var(--ink-soft);
-  line-height: 1.45;
 }
 
-.summary-cta {
-  font-size: 0.82rem;
+.summary-insight-foot a {
   font-weight: 600;
   color: var(--jade);
-  margin-top: 0.15rem;
 }
 
 .summary-foot {
   margin: var(--space-4) 0 var(--space-5);
   font-size: 0.9rem;
   color: var(--ink-soft);
-}
-
-.summary-drawer-answer {
-  margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: var(--ink);
-  white-space: pre-wrap;
-}
-
-@media (min-width: 820px) {
-  .summary-list {
-    grid-template-columns: 1fr 1fr;
-  }
 }
 
 @media (max-width: 780px) {
