@@ -85,6 +85,7 @@ export type LifeSummaryItem = {
   insights?: string[]
   timing?: LifeSummaryTiming[]
   ask_topic: string
+  remedies?: string[]
   version?: string
   // legacy FAQ fields
   category?: string

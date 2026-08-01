@@ -2658,11 +2658,20 @@ select {
   gap: 0.85rem;
 }
 
-.summary-insights p {
+.summary-insights p,
+.summary-para {
   margin: 0;
   font-size: 0.95rem;
   line-height: 1.6;
   color: var(--ink);
+  white-space: pre-wrap;
+}
+
+.summary-remedy-tags {
+  margin: 1rem 0 0;
+  font-size: 0.85rem;
+  color: var(--brass);
+  font-weight: 600;
 }
 
 .summary-insight-foot {

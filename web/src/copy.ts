@@ -417,25 +417,33 @@ export const COPY = {
   reportAsk: { funky: 'Poochho', seedha: 'Ask', sick: 'Ask' },
 
   summaryTitle: {
-    funky: 'Life summary — jo chart clearly dikhata hai',
-    seedha: 'Life summary',
-    sick: 'Life summary — what’s clearly visible',
+    funky: 'Jyotish summary — dasha, dosha, upaya',
+    seedha: 'Jyotish life summary',
+    sick: 'Jyotish map — timing, dosha, remedies',
   },
   summaryLede: {
-    funky: 'Career, rishta, money, health — chart facts + clear verdicts, timing ke saath.',
+    funky:
+      'Karma windows, Mahadasha/Antardasha, Manglik notes, aur upaya (mantra / daan / ratna) — kab ghatna, kaise balance.',
     seedha:
-      'Chart-based facts and clear verdicts on career, money, relationships, health, and life path — with ranked timing windows.',
-    sick: 'Facts from the chart, clean verdicts, ranked timing — not vibes-only copy.',
+      'A predictive Vedic map: current dasha windows, career and marriage house lords, Manglik notes, and remedies (mantra, charity, gemstone). Focused on when and how to balance — not only personality.',
+    sick:
+      'Dasha clocks, house lords, dosha flags, upaya — when the window opens and how to spiritually steady it.',
   },
   summaryNote: {
-    funky: 'Tendencies + timing colors — fate ka stamp nahi. Choices abhi bhi tumhari.',
-    seedha: 'These are tendencies and timing colors, not fixed fate. Your choices still matter.',
-    sick: 'Tendencies and timing — not destiny stamps. Your moves still count.',
+    funky: 'Predictive guidance + classical upaya — fate ka rubber stamp nahi. Medical/legal/finance alag.',
+    seedha:
+      'Educational Jyotish guidance and classical-style remedies — not fixed fate, and not medical, legal, or financial advice.',
+    sick: 'Timing + upaya, not destiny stamps. Not medical/legal/finance advice.',
   },
   summaryEmpty: {
-    funky: 'Naye rule-based insights ke liye chart dubara cast karo.',
-    seedha: 'Re-cast your chart to load the updated, rule-based life summary.',
-    sick: 'Re-cast to unlock the tighter summary engine.',
+    funky: 'Naye Jyotish summary ke liye chart dubara cast karo.',
+    seedha: 'Re-cast your chart to load the Jyotish-style summary (dasha, dosha, upaya).',
+    sick: 'Re-cast to unlock the dasha–dosha–upaya summary.',
+  },
+  summaryRemedyFocus: {
+    funky: 'Upaya focus grahas:',
+    seedha: 'Remedy focus planets:',
+    sick: 'Upaya grahas:',
   },
   summaryOpen: {
     funky: 'Poora padho →',

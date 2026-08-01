@@ -10,7 +10,7 @@ export function ReportSummary() {
   const revealRef = useReveal<HTMLDivElement>()
   const panels = report?.interpretation.life_summary ?? []
   const ready = panels.some(
-    (p) => p.version === 'deterministic-v1' && Array.isArray(p.insights) && p.insights.length > 0,
+    (p) => p.version === 'jyotish-v1' && Array.isArray(p.insights) && p.insights.length > 0,
   )
 
   return (
@@ -40,7 +40,7 @@ export function ReportSummary() {
                   </header>
 
                   {panel.timing?.length ? (
-                    <div className="summary-timing-row" aria-label="Timing windows">
+                    <div className="summary-timing-row" aria-label="Dasha windows">
                       {panel.timing.map((titem) => (
                         <span key={`${titem.label}-${titem.range}`} className="summary-chip">
                           <strong>{titem.label}</strong>
@@ -52,9 +52,18 @@ export function ReportSummary() {
 
                   <div className="summary-insights">
                     {(panel.insights ?? []).map((para) => (
-                      <p key={para.slice(0, 48)}>{para}</p>
+                      <p key={para.slice(0, 64)} className="summary-para">
+                        {para}
+                      </p>
                     ))}
                   </div>
+
+                  {panel.remedies?.length ? (
+                    <p className="summary-remedy-tags">
+                      <span>{t('summaryRemedyFocus')}</span>{' '}
+                      {panel.remedies.join(' · ')}
+                    </p>
+                  ) : null}
 
                   <p className="summary-insight-foot">
                     <Link to={`/report/ask?topic=${encodeURIComponent(panel.ask_topic)}`}>
