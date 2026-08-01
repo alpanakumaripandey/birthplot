@@ -8,9 +8,8 @@ export function ReportSummary() {
   const { report } = useChart()
   const { t } = useLingo()
   const revealRef = useReveal<HTMLDivElement>()
-  const panels = report?.interpretation.life_summary ?? []
-  const ready = panels.some(
-    (p) => p.version === 'jyotish-v1' && Array.isArray(p.insights) && p.insights.length > 0,
+  const reading = (report?.interpretation.life_summary ?? []).find(
+    (p) => p.version === 'jyotish-v2' && Array.isArray(p.insights) && p.insights.length > 0,
   )
 
   return (
@@ -23,7 +22,7 @@ export function ReportSummary() {
             <p className="summary-note">{t('summaryNote')}</p>
           </header>
 
-          {!ready ? (
+          {!reading ? (
             <div className="empty-panel">
               <p>{t('summaryEmpty')}</p>
               <Link className="btn" to="/cast">
@@ -31,48 +30,40 @@ export function ReportSummary() {
               </Link>
             </div>
           ) : (
-            <div className="summary-panels">
-              {panels.map((panel) => (
-                <article key={panel.id} className="summary-insight">
-                  <header className="summary-insight-head">
-                    <h2>{panel.title}</h2>
-                    <p className="summary-kicker">{panel.kicker}</p>
-                  </header>
+            <article className="summary-consult">
+              <header className="summary-insight-head">
+                <p className="summary-kicker">{reading.kicker}</p>
+              </header>
 
-                  {panel.timing?.length ? (
-                    <div className="summary-timing-row" aria-label="Dasha windows">
-                      {panel.timing.map((titem) => (
-                        <span key={`${titem.label}-${titem.range}`} className="summary-chip">
-                          <strong>{titem.label}</strong>
-                          <span>{titem.range}</span>
-                        </span>
-                      ))}
-                    </div>
-                  ) : null}
+              {reading.timing?.length ? (
+                <div className="summary-timing-row" aria-label="Dasha windows">
+                  {reading.timing.map((titem) => (
+                    <span key={`${titem.label}-${titem.range}`} className="summary-chip">
+                      <strong>{titem.label}</strong>
+                      <span>{titem.range}</span>
+                    </span>
+                  ))}
+                </div>
+              ) : null}
 
-                  <div className="summary-insights">
-                    {(panel.insights ?? []).map((para) => (
-                      <p key={para.slice(0, 64)} className="summary-para">
-                        {para}
-                      </p>
-                    ))}
-                  </div>
-
-                  {panel.remedies?.length ? (
-                    <p className="summary-remedy-tags">
-                      <span>{t('summaryRemedyFocus')}</span>{' '}
-                      {panel.remedies.join(' · ')}
-                    </p>
-                  ) : null}
-
-                  <p className="summary-insight-foot">
-                    <Link to={`/report/ask?topic=${encodeURIComponent(panel.ask_topic)}`}>
-                      {t('summaryAskMore')}
-                    </Link>
+              <div className="summary-insights summary-consult-body">
+                {(reading.insights ?? []).map((para) => (
+                  <p key={para.slice(0, 72)} className="summary-para">
+                    {para}
                   </p>
-                </article>
-              ))}
-            </div>
+                ))}
+              </div>
+
+              {reading.remedies?.length ? (
+                <p className="summary-remedy-tags">
+                  <span>{t('summaryRemedyFocus')}</span> {reading.remedies.join(' · ')}
+                </p>
+              ) : null}
+
+              <p className="summary-insight-foot">
+                <Link to="/report/ask">{t('summaryAskMore')}</Link>
+              </p>
+            </article>
           )}
 
           <p className="summary-foot">

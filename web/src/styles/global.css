@@ -2600,6 +2600,17 @@ select {
   color: var(--ink-soft);
 }
 
+.summary-consult {
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  padding: 1.35rem 1.4rem 1.25rem;
+  margin: var(--space-4) 0;
+}
+
+.summary-consult-body {
+  gap: 1.1rem;
+}
+
 .summary-panels {
   display: flex;
   flex-direction: column;

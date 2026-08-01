@@ -8,7 +8,7 @@ from typing import Dict, List, Sequence, Set, Tuple
 from kundli.chart import HouseInfo, KundliChart
 from kundli.dasha import DashaPeriod, DashaTimeline, _antardashas
 
-CONTENT_VERSION = "jyotish-v1"
+CONTENT_VERSION = "jyotish-v2"
 
 SIGN_LORD = {
     "Aries": "Mars",
@@ -257,44 +257,28 @@ def _windows(
     return out
 
 
-def _upaya_block(planets: Sequence[str]) -> str:
-    lines = ["Upaya (remedies) — pick one lane and stay consistent for 40–90 days:"]
+def _upaya_inline(planets: Sequence[str]) -> str:
+    bits: List[str] = []
     for p in planets:
         u = UPAYA.get(p)
         if not u:
             continue
-        lines.append(f"• {p}: Mantra — {u['mantra']}. Charity — {u['charity']}. Gemstone — {u['gemstone']}.")
-    lines.append(
-        "Remedies support karma hygiene; they do not replace medical, legal, or financial advice."
+        bits.append(
+            f"For {p}: mantra — {u['mantra']}; charity — {u['charity']}; "
+            f"gemstone note — {u['gemstone']}"
+        )
+    if not bits:
+        return ""
+    return (
+        "To balance these energies, stay with one remedy lane for 40–90 days. "
+        + " ".join(bits)
+        + " Remedies support karma hygiene; they are not medical, legal, or financial advice."
     )
-    return " ".join(lines) if len(lines) == 1 else "\n".join(lines)
-
-
-def _panel(
-    *,
-    id: str,
-    title: str,
-    kicker: str,
-    insights: List[str],
-    timing: List[dict],
-    ask_topic: str,
-    remedies: List[str],
-) -> dict:
-    return {
-        "id": id,
-        "title": title,
-        "kicker": kicker,
-        "insights": insights,
-        "timing": timing,
-        "ask_topic": ask_topic,
-        "remedies": remedies,
-        "version": CONTENT_VERSION,
-    }
 
 
 def build_life_summary(chart: KundliChart, timeline: DashaTimeline) -> List[dict]:
-    """Predictive Jyotish summary: when windows open + how to balance them."""
-    h2, h4, h6, h7, h9, h10 = (_house(chart, n) for n in (2, 4, 6, 7, 9, 10))
+    """One continuous Jyotish consult-style reading (not separate section cards)."""
+    h2, h4, h6, h7, h10 = (_house(chart, n) for n in (2, 4, 6, 7, 10))
     lord10, lord10_h, lord10_sign = _lord_placement(chart, 10)
     lord2, lord2_h, lord2_sign = _lord_placement(chart, 2)
     lord7, lord7_h, lord7_sign = _lord_placement(chart, 7)
@@ -305,22 +289,24 @@ def build_life_summary(chart: KundliChart, timeline: DashaTimeline) -> List[dict
     antar = timeline.current_antardasha
     now = _now(timeline)
     age = _age_at(chart, now)
+    manglik, manglik_detail, mitigated = _manglik(chart)
 
-    dasha_line = "Dasha timing needs a precise birth time for sharper windows."
-    karma_dasha = ""
     if maha and antar:
-        dasha_line = (
+        opening = (
+            f"Your kundli is read here as a karma blueprint — past-life debts and future destiny "
+            f"moving through operational time windows, not as a personality quiz. "
             f"You are currently running {maha.lord} Mahadasha until {_fmt_end(maha)}, "
-            f"with {antar.lord} Antardasha active ({_fmt(antar)})."
+            f"with {antar.lord} Antardasha active ({_fmt(antar)}). "
+            f"{_ruled_phrase(chart, maha.lord)}. "
+            f"This stretch activates karma around {PLANET_KARMA.get(maha.lord, maha.lord)}, "
+            f"with the shorter chapter coloring {PLANET_KARMA.get(antar.lord, antar.lord)}."
         )
-        karma_dasha = (
-            f"This period activates karma around {PLANET_KARMA.get(maha.lord, maha.lord)} "
-            f"and the shorter {PLANET_KARMA.get(antar.lord, antar.lord)}."
+    else:
+        opening = (
+            "Your kundli is read here as a karma blueprint — past-life debts and future destiny "
+            "through house lords and grahas. A precise birth time sharpens Mahadasha windows."
         )
 
-    # --- Career & Wealth ---
-    career_keys = _keys_for_houses(chart, (10, 2, 11, 6), ("Sun", "Saturn", "Mercury", "Mars", "Jupiter"))
-    career_wins = _windows(chart, timeline, career_keys)
     golden = False
     golden_why = ""
     if maha:
@@ -329,181 +315,124 @@ def build_life_summary(chart: KundliChart, timeline: DashaTimeline) -> List[dict
             golden = True
             hit = [HOUSE_NAME[n] for n in ruled if n in (2, 9, 10, 11)]
             golden_why = f"because {maha.lord} rules " + " and ".join(hit)
-        elif maha.lord in _house(chart, 10).planets:
+        elif maha.lord in h10.planets:
             golden = True
-            golden_why = f"because {maha.lord} currently sits in your 10th house of career"
-        elif antar and antar.lord in _house(chart, 10).planets:
+            golden_why = f"because {maha.lord} sits in your 10th house of career"
+        elif antar and antar.lord in h10.planets:
             golden = True
-            golden_why = f"because {antar.lord} Antardasha activates grahas in your 10th"
+            golden_why = f"because {antar.lord} Antardasha lights grahas in your 10th"
 
-    career_insights = [
-        (
-            f"{dasha_line} {_ruled_phrase(chart, maha.lord) if maha else ''}. "
-            + (
-                f"This is a golden operational window for career/wealth moves {golden_why}. "
-                if golden
-                else "Results in this stretch come more through duty and timed effort than shortcuts. "
-            )
-            + karma_dasha
-        ).strip(),
-        (
-            f"10th house is {h10.rashi_name} with {_occ(h10)}. "
-            f"10th lord {lord10} sits in house {lord10_h} ({lord10_sign}). "
-            f"Field blueprint: {CAREER_BY_SIGN[h10.rashi_name]}. "
-            f"2nd house (wealth) is {h2.rashi_name}; 2nd lord {lord2} is in house {lord2_h} ({lord2_sign})."
-        ),
-        (
-            (
-                f"Because {maha.lord} currently times your chart"
-                + (
-                    f" and rules luck/career houses ({', '.join(HOUSE_NAME[n] for n in _houses_ruled(chart, maha.lord) if n in (2, 9, 10, 11))})"
-                    if maha and any(n in (2, 9, 10, 11) for n in _houses_ruled(chart, maha.lord))
-                    else ""
-                )
-                + ", prefer launching, promotion asks, or structured business building inside this Mahadasha — "
-                "not gambling on ‘quick money’."
-                if maha
-                else "Build career through skill proof and timed asks."
-            )
-            + (
-                f" Watch Rahu themes ({PLANET_KARMA['Rahu']}) if Rahu is dasha-linked or occupies dusthana/career houses — "
-                "illusions of overnight wealth rise then."
-                if (maha and maha.lord == "Rahu")
-                or (antar and antar.lord == "Rahu")
-                or chart.planets["Rahu"].house in (2, 6, 8, 10, 11, 12)
-                else ""
-            )
-        ),
-        _upaya_block(
-            [
-                *(
-                    [maha.lord, antar.lord]
-                    if maha and antar
-                    else [lord10, lord2]
-                ),
-            ][:2]
-        ),
-    ]
+    rahu_warn = (
+        (maha and maha.lord == "Rahu")
+        or (antar and antar.lord == "Rahu")
+        or chart.planets["Rahu"].house in (2, 6, 8, 10, 11, 12)
+    )
 
-    # --- Love & Family ---
-    manglik, manglik_detail, mitigated = _manglik(chart)
-    love_keys = _keys_for_houses(chart, (7, 4, 2, 5), ("Venus", "Jupiter", "Moon", "Mars"))
-    love_wins = _windows(chart, timeline, love_keys)
-    mars_mature = age >= 28
-    love_insights = [
-        (
-            f"{dasha_line} For marriage/home, track Venus, 7th lord {lord7}, and 4th lord {lord4}. "
-            f"7th is {h7.rashi_name} ({_occ(h7)}); 7th lord {lord7} in house {lord7_h} ({lord7_sign}). "
-            f"4th is {h4.rashi_name}; 4th lord {lord4} in house {lord4_h} ({lord4_sign})."
-        ),
-        (
-            (
-                f"Manglik Dosha note: {manglik_detail} — classical texts link Mars in 1/4/7/8/12 with friction or delay in marriage. "
+    career = (
+        f"Regarding career and wealth (10th and 2nd houses): the 10th is {h10.rashi_name} "
+        f"with {_occ(h10)}; 10th lord {lord10} sits in house {lord10_h} ({lord10_sign}). "
+        f"The work field this points to is {CAREER_BY_SIGN[h10.rashi_name]}. "
+        f"The 2nd house of resources is {h2.rashi_name}; 2nd lord {lord2} is in house {lord2_h} "
+        f"({lord2_sign}). "
+        + (
+            f"Because of the current dasha, this is a golden window to build, launch, or ask for growth "
+            f"{golden_why} — use it for structured business or career moves, not speculation. "
+            if golden
+            else "In this dasha, prefer steady duty and timed asks over sudden leaps. "
+        )
+        + (
+            "Watch Rahu’s hunger for shortcuts: it can create illusions of quick money; "
+            "verify every offer twice before you commit. "
+            if rahu_warn
+            else "Keep income plans transparent and slow enough to stay clean. "
+        )
+    )
+
+    love = (
+        f"When analyzing love and family (7th and 4th houses): the 7th is {h7.rashi_name} "
+        f"({_occ(h7)}); 7th lord {lord7} sits in house {lord7_h} ({lord7_sign}). "
+        f"The 4th of home/peace is {h4.rashi_name}; 4th lord {lord4} is in house {lord4_h} "
+        f"({lord4_sign}). "
+        + (
+            f"Your chart shows Manglik Dosha — {manglik_detail} — which classical texts link with "
+            f"friction or delay around marriage. "
+            if manglik
+            else f"Basic Manglik Dosha (Mars in 1/4/7/8/12) is not indicated ({manglik_detail}). "
+        )
+        + (
+            "However, benefic Venus/Jupiter support mitigates the severity; still do Kundali matching "
+            "before commitment. "
+            if manglik and mitigated
+            else (
+                "Without a clear Venus/Jupiter cushion, take matching and timing seriously. "
                 if manglik
-                else f"Manglik Dosha: not indicated by the basic Mars-in-1/4/7/8/12 rule ({manglik_detail}). "
+                else "Even so, gun milan / dosha balance with a partner’s chart remains essential. "
             )
+        )
+        + (
+            f"Mars matures around age 28; you are {age} now"
             + (
-                "Benefic Venus/Jupiter support mitigates severity — still prefer Kundali matching before commitment. "
-                if manglik and mitigated
-                else (
-                    "Without clear Venus/Jupiter cushion, take matching and timing seriously. "
-                    if manglik
-                    else "Still match charts for gun milan / dosha balance before marriage decisions. "
-                )
+                ", so mitigation by maturity is already available. "
+                if age >= 28
+                else " — patience until that maturity helps reduce heat. "
             )
-            + (
-                f"Mars energy softens after maturity (~age 28); you are {age} now"
-                + (" — mitigation window is open." if mars_mature else " — patience until Mars matures helps.")
-            )
-        ),
-        (
-            "Operational windows for commitment talks, engagement, or home decisions: "
-            + (
-                "; ".join(f"{lab} ({rng})" for lab, rng in love_wins)
-                if love_wins
-                else "no strong near dasha hit — prepare emotionally and financially first"
-            )
-            + ". This is a time map, not a fixed wedding date."
-        ),
-        _upaya_block(["Mars", "Venus"] if manglik else ["Venus", lord7]),
-    ]
+        )
+    )
 
-    # --- Health & struggles ---
-    health_keys = _keys_for_houses(chart, (1, 6, 8), ("Sun", "Moon", "Mars", "Saturn"))
-    health_wins = _windows(chart, timeline, health_keys)
-    weak = []
+    weak: List[str] = []
     for name in ("Saturn", "Mars", "Rahu", "Ketu", "Sun"):
         if chart.planets[name].house in (6, 8, 12) or name == lord6:
             weak.append(name)
     if not weak:
         weak = [lord6, "Moon"]
 
-    health_insights = [
-        (
-            f"6th house (disease/service/struggle) is {h6.rashi_name} with {_occ(h6)}. "
-            f"6th lord {lord6} sits in house {lord6_h} ({lord6_sign}). "
-            f"Physical watch-themes from sign lore: {HEALTH_BY_SIGN[h6.rashi_name]}. "
-            f"Planetary pressure points: {', '.join(weak)}."
-        ),
-        (
-            f"{dasha_line} "
-            + (
-                f"When {antar.lord if antar else 'the antardasha lord'} or {maha.lord if maha else 'mahadasha lord'} "
-                f"touches the 6th/8th axis, old health or workplace conflict karma can surface for clearing — "
-                "treat it as a repair window, not punishment."
-            )
-        ),
-        (
-            "Supportive health-timing (for routines, checkups, recovery vows): "
-            + (
-                "; ".join(f"{lab} ({rng})" for lab, rng in health_wins)
-                if health_wins
-                else "keep year-round discipline; no sharp dasha spike listed"
-            )
-            + ". Spiritual blockage often shows as ignored rest, bitter speech, or skipped seva — fix those first."
-        ),
-        _upaya_block(weak[:2]),
-    ]
+    health = (
+        f"For health and daily struggles (6th house): the 6th is {h6.rashi_name} with {_occ(h6)}; "
+        f"6th lord {lord6} sits in house {lord6_h} ({lord6_sign}). "
+        f"Themes to watch in the body-mind field include {HEALTH_BY_SIGN[h6.rashi_name]}. "
+        f"Pressure grahas in this story: {', '.join(weak)}. "
+        f"When the running dasha lords touch the 6th/8th axis, old conflict or fatigue karma can surface "
+        f"for clearing — treat it as a repair window, not punishment. "
+        f"Spiritual blockage often shows first as skipped rest, bitter speech, or abandoned seva."
+    )
 
-    # --- Destiny / karma overview kicker shared ---
-    career_kicker = (
-        f"{maha.lord if maha else '—'} Mahadasha"
-        + (f" until {_fmt_end(maha)}" if maha else "")
-        + (" · golden career window" if golden else " · duty-first window")
+    remedy_planets: List[str] = []
+    for p in ([maha.lord, antar.lord] if maha and antar else []) + (
+        ["Mars", "Venus"] if manglik else ["Venus", lord7]
+    ) + weak:
+        if p not in remedy_planets:
+            remedy_planets.append(p)
+    remedy_planets = remedy_planets[:3]
+
+    closing = (
+        "Ultimately this is a predictive, time-bound map: less about why you feel a certain way, "
+        "more about when events tend to manifest and how to spiritually steady the field. "
+        + _upaya_inline(remedy_planets)
     )
-    love_kicker = (
-        ("Manglik present" if manglik else "Manglik clear (basic rule)")
-        + (" · mitigated" if manglik and mitigated else "")
-        + (f" · age {age}")
+
+    timing: List[dict] = []
+    if maha and antar:
+        timing.append({"label": f"{maha.lord}–{antar.lord} now", "range": _fmt(antar)})
+        timing.append({"label": f"{maha.lord} Mahadasha", "range": _fmt(maha)})
+    for lab, rng in _windows(chart, timeline, _keys_for_houses(chart, (10, 7, 6), ()), limit=2):
+        if not any(t["range"] == rng for t in timing):
+            timing.append({"label": lab, "range": rng})
+
+    kicker = (
+        (f"{maha.lord} Mahadasha until {_fmt_end(maha)}" if maha else "Dasha pending precise time")
+        + (" · golden career window" if golden else "")
+        + (" · Manglik noted" if manglik else "")
     )
-    health_kicker = f"6th lord {lord6} in house {lord6_h} · watch {HEALTH_BY_SIGN[h6.rashi_name].split(',')[0]}"
 
     return [
-        _panel(
-            id="career",
-            title="Career, Wealth & Karma Windows",
-            kicker=career_kicker,
-            insights=career_insights,
-            timing=[{"label": lab, "range": rng} for lab, rng in career_wins],
-            ask_topic="career",
-            remedies=[maha.lord, antar.lord] if maha and antar else [lord10, lord2],
-        ),
-        _panel(
-            id="love",
-            title="Marriage, Home & Dosha Notes",
-            kicker=love_kicker,
-            insights=love_insights,
-            timing=[{"label": lab, "range": rng} for lab, rng in love_wins],
-            ask_topic="marriage",
-            remedies=["Mars", "Venus"] if manglik else ["Venus", lord7],
-        ),
-        _panel(
-            id="life",
-            title="Health, Struggle & Upaya",
-            kicker=health_kicker,
-            insights=health_insights,
-            timing=[{"label": lab, "range": rng} for lab, rng in health_wins],
-            ask_topic="health",
-            remedies=weak[:2],
-        ),
+        {
+            "id": "consult",
+            "title": "Jyotish consult summary",
+            "kicker": kicker,
+            "insights": [opening, career, love, health, closing],
+            "timing": timing[:4],
+            "ask_topic": "career",
+            "remedies": remedy_planets,
+            "version": CONTENT_VERSION,
+        }
     ]
