@@ -13,6 +13,7 @@ import { ReportIndex } from './pages/ReportIndex'
 import { ReportTiming } from './pages/ReportTiming'
 import { ReportYou } from './pages/ReportYou'
 import { ReportYogas } from './pages/ReportYogas'
+import { Settings } from './pages/Settings'
 
 export default function App() {
   return (
@@ -32,6 +33,7 @@ export default function App() {
               <Route path="report/ask" element={<ReportAsk />} />
               <Route path="lexicon" element={<Lexicon />} />
               <Route path="how" element={<How />} />
+              <Route path="settings" element={<Settings />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>

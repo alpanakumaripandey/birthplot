@@ -93,9 +93,13 @@ def serialize_chart(chart: KundliChart) -> Dict[str, Any]:
         "birth": {
             "name": chart.birth.name,
             "birth_date": chart.birth.birth_date.isoformat(),
-            "birth_time": chart.birth.birth_time.strftime("%H:%M")
-            if chart.birth.birth_time
-            else None,
+            "birth_time": None
+            if chart.birth.time_unknown
+            else (
+                chart.birth.birth_time.strftime("%H:%M")
+                if chart.birth.birth_time
+                else None
+            ),
             "place_query": chart.birth.place_query,
             "time_unknown": chart.birth.time_unknown,
         },
@@ -122,13 +126,19 @@ def serialize_yoga(y: YogaResult) -> Dict[str, Any]:
         "present": y.present,
         "detail": y.detail,
         "meaning": y.meaning,
+        "kind": getattr(y, "kind", "classical"),
     }
 
 
 def serialize_timeline(tl: DashaTimeline) -> Dict[str, Any]:
     current_antar = tl.current_antardasha
+    bal = tl.balance_at_birth
     return {
-        "balance_at_birth": tl.balance_at_birth,
+        "balance_at_birth": {
+            "lord": bal["lord"],
+            "years_remaining": float(bal["years_remaining"]),
+            "full_years": float(bal["full_years"]),
+        },
         "mahadashas": [_period(p) for p in tl.mahadashas],
         "current_mahadasha": _period(tl.current_mahadasha) if tl.current_mahadasha else None,
         "current_antardasha": _period(current_antar) if current_antar else None,
@@ -147,6 +157,7 @@ def serialize_interpretation(interp: dict) -> Dict[str, Any]:
         "yogas": [serialize_yoga(y) for y in interp["yogas"]],
         "dasha": interp["dasha"],
         "strengths": interp["strengths"],
+        "life_areas": interp.get("life_areas", []),
     }
 
 

@@ -1,31 +1,32 @@
 :root,
 [data-theme="day"] {
-  --mist: #dce8eb;
-  --mist-deep: #c5d5db;
-  --ink: #1a2428;
-  --ink-soft: #3d4f56;
-  --jade: #1f6f6a;
-  --jade-bright: #2a9a93;
-  --brass: #b08d57;
-  --brass-hot: #c9a66b;
-  --paper: #e4eef0;
-  --paper-glass: rgba(220, 232, 235, 0.72);
-  --line: rgba(26, 36, 40, 0.14);
+  /* Warmer monsoon-ink day: parchment + deep jade, less cool SaaS mist */
+  --mist: #e8e4d8;
+  --mist-deep: #d4cfc0;
+  --ink: #1c1814;
+  --ink-soft: #4a4238;
+  --jade: #0f5c56;
+  --jade-bright: #1a8a82;
+  --brass: #a67c3d;
+  --brass-hot: #c4923f;
+  --paper: #f0ebe0;
+  --paper-glass: rgba(240, 235, 224, 0.82);
+  --line: rgba(28, 24, 20, 0.16);
   --danger: #9b3d3d;
   --ok: #1f6f4a;
-  --surface: rgba(200, 218, 223, 0.68);
-  --surface-strong: rgba(195, 214, 220, 0.85);
-  --nav-bg: rgba(197, 213, 219, 0.78);
-  --drawer-bg: linear-gradient(180deg, #d5e4e8 0%, #c5d5db 100%);
+  --surface: rgba(244, 239, 228, 0.88);
+  --surface-strong: rgba(250, 246, 236, 0.94);
+  --nav-bg: rgba(236, 230, 216, 0.9);
+  --drawer-bg: linear-gradient(180deg, #efe9dc 0%, #ddd5c4 100%);
   --hero-veil: linear-gradient(
     105deg,
-    rgba(185, 203, 207, 0.88) 0%,
-    rgba(197, 213, 219, 0.55) 45%,
-    rgba(176, 141, 87, 0.12) 100%
+    rgba(240, 235, 224, 0.55) 0%,
+    rgba(232, 228, 216, 0.28) 42%,
+    rgba(166, 124, 61, 0.14) 100%
   );
-  --body-grad: linear-gradient(165deg, #cfdce2 0%, var(--mist) 38%, #b9cbcf 100%);
-  --selection-bg: rgba(176, 141, 87, 0.45);
-  --scrollbar: #b08d57;
+  --body-grad: linear-gradient(165deg, #e4dcc8 0%, var(--mist) 42%, #c8d4c8 100%);
+  --selection-bg: rgba(166, 124, 61, 0.4);
+  --scrollbar: #a67c3d;
 
   --font-display: "Fraunces", Georgia, serif;
   --font-body: "DM Sans", system-ui, sans-serif;
@@ -90,7 +91,11 @@
 [data-motion="calm"] .kd-breathe,
 [data-motion="calm"] .star-streak,
 [data-motion="calm"] .seg-now-ping,
-[data-motion="calm"] .tagline-ticker .ticker-line {
+[data-motion="calm"] .tagline-ticker .ticker-line,
+[data-motion="calm"] .hero-brand,
+[data-motion="calm"] .hero-brand em,
+[data-motion="calm"] .hero-graha-chip,
+[data-motion="calm"] .hero-element-pill {
   animation: none !important;
 }
 

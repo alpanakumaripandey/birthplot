@@ -46,6 +46,15 @@ export function Lexicon() {
     }
   }, [kind])
 
+  useEffect(() => {
+    if (!openKey) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpenKey(null)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [openKey])
+
   const entries = items
     ? Object.entries(items).filter(([key, val]) => {
         const blob = `${key} ${JSON.stringify(val)}`.toLowerCase()
@@ -94,7 +103,7 @@ export function Lexicon() {
       </div>
 
       <div className="field" style={{ maxWidth: '20rem', marginBottom: '1.5rem' }}>
-        <label htmlFor="filter">Filter</label>
+        <label htmlFor="filter">{t('lexFilter')}</label>
         <input
           id="filter"
           type="text"
@@ -105,7 +114,10 @@ export function Lexicon() {
       </div>
 
       {error && <div className="error-banner">{error}</div>}
-      {!items && !error && <p>Loading the library…</p>}
+      {!items && !error && <p>{t('lexLoading')}</p>}
+      {items && entries.length === 0 && (
+        <p className="lede">{t('lexEmpty')}</p>
+      )}
 
       <div className="lex-grid">
         {entries.map(([key, val]) => {
@@ -124,7 +136,7 @@ export function Lexicon() {
           return (
             <TiltCard
               key={key}
-              as="article"
+              as="button"
               className={`lex-item${art ? ' art-card' : ''}`}
               onClick={() => setOpenKey(key)}
             >
@@ -192,7 +204,7 @@ export function Lexicon() {
               ))}
             </div>
             <button type="button" className="btn" onClick={() => setOpenKey(null)}>
-              Close
+              {t('lexClose')}
             </button>
           </div>
         </div>

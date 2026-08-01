@@ -37,4 +37,18 @@ export const RASHI_ELEMENT: Record<number, keyof typeof ELEMENT_ART> = {
 
 export const NAKSHATRA_SKY = '/art/nakshatra-sky.png'
 export const HERO_DAY = '/art/hero-mist.png'
+export const HERO_DAY_GLOW = '/art/hero-day-glow.png'
 export const HERO_RATRI = '/art/hero-ratri.png'
+export const CAST_ART = '/art/cast-ritual.png'
+export const HOW_WHEEL = '/art/wheel-atmosphere.png'
+export const LEXICON_MOSAIC = '/art/lexicon-mosaic.png'
+
+export const HOW_STEP_ART = {
+  birth: '/art/how-birth.png',
+  sky: '/art/how-sky.png',
+  lagna: '/art/how-lagna.png',
+  grahas: '/art/how-grahas.png',
+  dasha: '/art/how-dasha.png',
+} as const
+
+export const GRAHA_NAMES = Object.keys(GRAHA_ART)

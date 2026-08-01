@@ -1,11 +1,13 @@
+import { useNavigate } from 'react-router-dom'
 import { useChart } from '../ChartContext'
 import { useLingo } from '../hooks/useLingo'
 import { MagneticButton } from './MagneticButton'
 import { ReportSubnav } from './ReportSubnav'
 
 export function ReportGate({ children }: { children: React.ReactNode }) {
-  const { report } = useChart()
+  const { report, clear } = useChart()
   const { t } = useLingo()
+  const navigate = useNavigate()
 
   if (!report) {
     return (
@@ -21,15 +23,21 @@ export function ReportGate({ children }: { children: React.ReactNode }) {
 
   const unknown = report.chart.birth.time_unknown
 
+  function onClear() {
+    clear()
+    navigate('/cast')
+  }
+
   return (
     <div className="wrap report-layout page-enter">
       <ReportSubnav />
       <div>
-        {unknown && (
-          <div className="warn-banner">
-            Birth time was fuzzy — Lagna may be unreliable. Moon + dasha still help.
-          </div>
-        )}
+        <div className="report-toolbar">
+          <button type="button" className="btn btn-ghost btn-sm" onClick={onClear}>
+            {t('clearChart')}
+          </button>
+        </div>
+        {unknown && <div className="warn-banner">{t('timeUnknownWarn')}</div>}
         {children}
         <p style={{ marginTop: '2.5rem', fontSize: '0.85rem' }}>
           {report.interpretation.disclaimer}

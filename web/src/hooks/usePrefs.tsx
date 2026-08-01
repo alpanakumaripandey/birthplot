@@ -10,7 +10,7 @@ import {
 
 export type ThemeMode = 'day' | 'ratri'
 export type MotionMode = 'drama' | 'calm'
-export type LingoMode = 'funky' | 'seedha'
+export type LingoMode = 'funky' | 'seedha' | 'sick'
 
 type Prefs = {
   theme: ThemeMode
@@ -49,15 +49,27 @@ function applyAttrs(theme: ThemeMode, motion: MotionMode, lingo: LingoMode) {
   root.setAttribute('data-lingo', lingo)
 }
 
+function preferReducedMotion(): boolean {
+  try {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  } catch {
+    return false
+  }
+}
+
 export function PrefsProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeMode>(() =>
     read(KEYS.theme, 'day', ['day', 'ratri']),
   )
   const [motion, setMotionState] = useState<MotionMode>(() =>
-    read(KEYS.motion, 'drama', ['drama', 'calm']),
+    read(
+      KEYS.motion,
+      preferReducedMotion() ? 'calm' : 'drama',
+      ['drama', 'calm'],
+    ),
   )
   const [lingo, setLingoState] = useState<LingoMode>(() =>
-    read(KEYS.lingo, 'funky', ['funky', 'seedha']),
+    read(KEYS.lingo, 'funky', ['funky', 'seedha', 'sick']),
   )
 
   useEffect(() => {
@@ -87,7 +99,8 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
       setLingo,
       toggleTheme: () => setTheme(theme === 'ratri' ? 'day' : 'ratri'),
       toggleMotion: () => setMotion(motion === 'calm' ? 'drama' : 'calm'),
-      toggleLingo: () => setLingo(lingo === 'funky' ? 'seedha' : 'funky'),
+      toggleLingo: () =>
+        setLingo(lingo === 'funky' ? 'sick' : lingo === 'sick' ? 'seedha' : 'funky'),
     }),
     [theme, motion, lingo, setTheme, setMotion, setLingo],
   )

@@ -61,7 +61,7 @@ class ChartRequest(BaseModel):
 
 
 class AskRequest(BaseModel):
-    name: str
+    name: str = Field(..., min_length=1)
     date: str
     time: Optional[str] = None
     place: str

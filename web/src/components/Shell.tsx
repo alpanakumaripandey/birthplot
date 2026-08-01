@@ -1,14 +1,43 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useChart } from '../ChartContext'
-import { usePrefs } from '../hooks/usePrefs'
+import { useLingo } from '../hooks/useLingo'
 import { LogoMark } from './LogoMark'
 import { ShootingStars } from './ShootingStars'
 
 export function Shell() {
   const [open, setOpen] = useState(false)
   const { report } = useChart()
-  const { theme, motion, lingo, toggleTheme, toggleMotion, toggleLingo } = usePrefs()
+  const { t } = useLingo()
+  const navRef = useRef<HTMLUListElement>(null)
+  const btnRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false)
+        btnRef.current?.focus()
+      }
+    }
+    const onPointer = (e: MouseEvent) => {
+      const target = e.target as Node
+      if (
+        navRef.current &&
+        !navRef.current.contains(target) &&
+        btnRef.current &&
+        !btnRef.current.contains(target)
+      ) {
+        setOpen(false)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    window.addEventListener('mousedown', onPointer)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      window.removeEventListener('mousedown', onPointer)
+    }
+  }, [open])
 
   return (
     <div className="shell">
@@ -21,52 +50,25 @@ export function Shell() {
           </span>
         </NavLink>
 
-        <div className="nav-toggles" aria-label="Preferences">
-          <button
-            type="button"
-            className="pref-toggle"
-            onClick={toggleTheme}
-            title={theme === 'ratri' ? 'Day mode' : 'Ratri mode'}
-            aria-pressed={theme === 'ratri'}
-          >
-            <span className={`pref-icon sun-moon${theme === 'ratri' ? ' is-moon' : ''}`}>
-              <span className="pref-sun" />
-              <span className="pref-moon" />
-            </span>
-            <span className="pref-label">{theme === 'ratri' ? 'Ratri' : 'Day'}</span>
-          </button>
-          <button
-            type="button"
-            className="pref-toggle"
-            onClick={toggleLingo}
-            title="Toggle lingo"
-            aria-pressed={lingo === 'funky'}
-          >
-            <span className="pref-label">{lingo === 'funky' ? 'Funky' : 'Seedha'}</span>
-          </button>
-          <button
-            type="button"
-            className="pref-toggle"
-            onClick={toggleMotion}
-            title="Toggle motion"
-            aria-pressed={motion === 'drama'}
-          >
-            <span className="pref-label">{motion === 'drama' ? 'Drama' : 'Calm'}</span>
-          </button>
-        </div>
-
         <button
+          ref={btnRef}
           type="button"
           className="nav-toggle"
-          aria-label="Menu"
+          aria-label={t('navMenu')}
+          aria-expanded={open}
+          aria-controls="site-nav-links"
           onClick={() => setOpen((v) => !v)}
         >
-          Menu
+          {t('navMenu')}
         </button>
-        <ul className={`nav-links${open ? ' open' : ''}`}>
+        <ul
+          id="site-nav-links"
+          ref={navRef}
+          className={`nav-links${open ? ' open' : ''}`}
+        >
           <li>
             <NavLink to="/cast" onClick={() => setOpen(false)}>
-              Cast
+              {t('navCast')}
             </NavLink>
           </li>
           <li>
@@ -74,17 +76,22 @@ export function Shell() {
               to={report ? '/report/you' : '/report'}
               onClick={() => setOpen(false)}
             >
-              Report
+              {t('navReport')}
             </NavLink>
           </li>
           <li>
             <NavLink to="/lexicon" onClick={() => setOpen(false)}>
-              Lexicon
+              {t('navLexicon')}
             </NavLink>
           </li>
           <li>
             <NavLink to="/how" onClick={() => setOpen(false)}>
-              How
+              {t('navHow')}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/settings" onClick={() => setOpen(false)}>
+              {t('navSettings')}
             </NavLink>
           </li>
         </ul>
@@ -92,10 +99,7 @@ export function Shell() {
       <main className="shell-main">
         <Outlet />
       </main>
-      <footer className="site-footer">
-        Birthplot · Jyotish for curious humans · Learning guidance, not destiny decrees
-      </footer>
+      <footer className="site-footer">{t('footer')}</footer>
     </div>
   )
 }
-

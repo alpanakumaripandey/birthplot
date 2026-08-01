@@ -25,6 +25,11 @@ export function ReportTiming() {
     )
   }, [report, picked])
 
+  const maha = report?.timeline.current_mahadasha
+  const antar = report?.timeline.antardashas_in_current ?? []
+  const praty = report?.timeline.pratyantars_in_current ?? []
+  const mahas = report?.timeline.mahadashas ?? []
+
   return (
     <ReportGate>
       {report && (
@@ -32,28 +37,72 @@ export function ReportTiming() {
           <h1 className="section-title">{t('timingTitle')}</h1>
           <p className="lede">{t('timingLede')}</p>
 
-          <div className="chip-row">
-            {report.interpretation.dasha.slice(0, 3).map((line) => (
-              <div key={line.slice(0, 32)} className="chip" style={{ cursor: 'default' }}>
-                <strong>{line.split(':')[0]}</strong>
-                <span>{line.length > 80 ? `${line.slice(0, 80)}…` : line}</span>
-              </div>
-            ))}
-          </div>
+          {maha && (
+            <div className="chip-row">
+              <button
+                type="button"
+                className={`chip${picked?.start === maha.start ? ' active' : ''}`}
+                onClick={() => setPicked(maha)}
+              >
+                <strong>
+                  {t('timingNowMaha')}: {maha.lord}
+                </strong>
+                <span>
+                  {maha.start.slice(0, 10)} → {maha.end.slice(0, 10)}
+                </span>
+              </button>
+              {report.timeline.current_antardasha && (
+                <button
+                  type="button"
+                  className={`chip${
+                    picked?.start === report.timeline.current_antardasha.start
+                      ? ' active'
+                      : ''
+                  }`}
+                  onClick={() => setPicked(report.timeline.current_antardasha)}
+                >
+                  <strong>
+                    {t('timingNowAntar')}: {report.timeline.current_antardasha.lord}
+                  </strong>
+                  <span>
+                    {report.timeline.current_antardasha.start.slice(0, 10)} →{' '}
+                    {report.timeline.current_antardasha.end.slice(0, 10)}
+                  </span>
+                </button>
+              )}
+            </div>
+          )}
 
-          <TimelineScrubber
-            label="Antardashas in current mahadasha"
-            periods={report.timeline.antardashas_in_current}
-            selectedStart={picked?.level === 'antardasha' ? picked.start : null}
-            onSelect={setPicked}
-          />
+          {mahas.length > 0 ? (
+            <TimelineScrubber
+              label={t('timingMahaLabel')}
+              periods={mahas}
+              selectedStart={picked?.level === 'mahadasha' ? picked.start : null}
+              onSelect={setPicked}
+            />
+          ) : (
+            <p className="lede">{t('timingEmpty')}</p>
+          )}
 
-          <TimelineScrubber
-            label="Pratyantar strip"
-            periods={report.timeline.pratyantars_in_current}
-            selectedStart={picked?.level === 'pratyantar' ? picked.start : null}
-            onSelect={setPicked}
-          />
+          {antar.length > 0 ? (
+            <TimelineScrubber
+              label={t('timingAntarLabel')}
+              periods={antar}
+              selectedStart={picked?.level === 'antardasha' ? picked.start : null}
+              onSelect={setPicked}
+            />
+          ) : (
+            <p className="lede">{t('timingEmptyAntar')}</p>
+          )}
+
+          {praty.length > 0 ? (
+            <TimelineScrubber
+              label={t('timingPratyLabel')}
+              periods={praty}
+              selectedStart={picked?.level === 'pratyantar' ? picked.start : null}
+              onSelect={setPicked}
+            />
+          ) : null}
 
           <DetailDrawer
             open={!!picked}

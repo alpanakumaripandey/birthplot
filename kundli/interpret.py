@@ -59,31 +59,27 @@ def house_lines(chart: KundliChart) -> List[str]:
 
 
 def strengths_summary(chart: KundliChart, yogas: List[YogaResult]) -> List[str]:
+    """Short, non-duplicative notes for chips / major summary."""
     notes: List[str] = []
-    present = [y for y in yogas if y.present]
-    if present:
-        notes.append(
-            "Notable combinations: " + ", ".join(y.name for y in present) + "."
-        )
+    classical = [y for y in yogas if y.present and getattr(y, "kind", "classical") == "classical"]
+    if classical:
+        notes.append("Classical yogas on: " + ", ".join(y.name for y in classical) + ".")
 
-    # Simple focus: strongest occupied kendras / personal planets
-    for house_num, label in [(1, "self/vitality"), (10, "career"), (7, "partnerships"), (5, "creativity")]:
+    for house_num, label in [(1, "self"), (10, "career"), (7, "partners"), (5, "creativity")]:
         occ = chart.houses[house_num - 1].planets
         if occ:
-            notes.append(f"House {house_num} ({label}) is active with: {', '.join(occ)}.")
+            notes.append(f"H{house_num} ({label}): {', '.join(occ)}.")
 
-    # Benefics vs challenging in Lagna
     lagna_planets = chart.houses[0].planets
     if lagna_planets:
-        notes.append(
-            f"Planets in Lagna shape first impressions and vitality: {', '.join(lagna_planets)}."
-        )
+        notes.append(f"Lagna occupied by {', '.join(lagna_planets)}.")
     else:
-        notes.append(
-            f"Empty Lagna sign {chart.lagna.rashi_name} - personality colors more from Lagna lord and Moon."
-        )
+        notes.append(f"Empty Lagna ({chart.lagna.rashi_name}) — lean on Lagna lord + Moon.")
 
-    notes.append(moon_blurb(chart))
+    moon = chart.planets["Moon"]
+    notes.append(
+        f"Moon in {moon.info.rashi_name} / {chart.moon_nakshatra} p{chart.moon_pada} (H{moon.house})."
+    )
     return notes
 
 
@@ -116,6 +112,80 @@ def dasha_summary(timeline: DashaTimeline) -> List[str]:
     return lines
 
 
+def life_area_briefs(chart: KundliChart, timeline: DashaTimeline) -> List[dict]:
+    """Career / education / relationship cards for the You report."""
+    from kundli.qa import (
+        answer_topic,
+        _fmt_range,
+        _topic_lords,
+        _lord_hits_topic,
+        _plain,
+    )
+    from kundli.knowledge_loader import topics
+
+    specs = [
+        ("career", "Career", "career"),
+        ("education", "Education", "education"),
+        ("marriage", "Relationship", "marriage"),
+    ]
+    out: List[dict] = []
+    topic_kb = topics()
+    for key, label, ask_topic in specs:
+        meta = topic_kb[key]
+        full = answer_topic(chart, timeline, key)
+        relevant = _topic_lords(chart, meta)
+        plain = _plain(key)
+
+        if timeline.current_mahadasha and timeline.current_antardasha:
+            m = timeline.current_mahadasha
+            a = timeline.current_antardasha
+            hits = [x for x in (m.lord, a.lord) if _lord_hits_topic(x, relevant, meta)]
+            if hits:
+                headline = f"Right now: an important stretch for {plain['short']}"
+                present_bit = plain["active"].split(".")[0] + "."
+            else:
+                headline = f"Right now: a gentler stretch for {plain['short']}"
+                present_bit = plain["quiet"].split(".")[0] + "."
+            present_bit = f"{present_bit} This chapter runs through {a.end.strftime('%b %Y')}."
+        else:
+            headline = f"{plain.get('title_hint', label)} at a glance"
+            present_bit = plain["about"]
+
+        ahead_bit = plain["future_quiet"]
+        if timeline.current_antardasha and timeline.antardashas_in_current:
+            for antar in timeline.antardashas_in_current:
+                if antar.start <= timeline.current_antardasha.start:
+                    continue
+                if _lord_hits_topic(antar.lord, relevant, meta):
+                    ahead_bit = (
+                        f"Coming up ({_fmt_range(antar)}): {plain['future_active']}"
+                    )
+                    break
+            else:
+                if timeline.current_mahadasha and timeline.mahadashas:
+                    for maha in timeline.mahadashas:
+                        if maha.start <= timeline.current_mahadasha.start:
+                            continue
+                        ahead_bit = (
+                            f"From {maha.start.strftime('%b %Y')}: a longer new chapter begins."
+                        )
+                        break
+
+        out.append(
+            {
+                "id": key,
+                "label": label,
+                "ask_topic": ask_topic,
+                "headline": headline,
+                "blurb": f"{present_bit} {ahead_bit}",
+                "full": full,
+                "houses": list(meta["houses"]),
+                "planets": list(meta["planets"]),
+            }
+        )
+    return out
+
+
 def build_interpretation(chart: KundliChart, timeline: DashaTimeline) -> dict:
     yoga_list = detect_yogas(chart)
     return {
@@ -131,4 +201,5 @@ def build_interpretation(chart: KundliChart, timeline: DashaTimeline) -> dict:
         "yogas": yoga_list,
         "dasha": dasha_summary(timeline),
         "strengths": strengths_summary(chart, yoga_list),
+        "life_areas": life_area_briefs(chart, timeline),
     }

@@ -58,6 +58,18 @@ export type YogaResult = {
   present: boolean
   detail: string
   meaning: string
+  kind?: 'classical' | 'note'
+}
+
+export type LifeArea = {
+  id: string
+  label: string
+  ask_topic: string
+  headline: string
+  blurb: string
+  full: string
+  houses: number[]
+  planets: string[]
 }
 
 export type Interpretation = {
@@ -69,6 +81,7 @@ export type Interpretation = {
   yogas: YogaResult[]
   dasha: string[]
   strengths: string[]
+  life_areas?: LifeArea[]
 }
 
 export type Timeline = {

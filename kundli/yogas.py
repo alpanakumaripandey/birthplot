@@ -14,6 +14,7 @@ class YogaResult:
     present: bool
     detail: str
     meaning: str
+    kind: str = "classical"  # "classical" | "note"
 
 
 def detect_yogas(chart: KundliChart) -> List[YogaResult]:
@@ -32,6 +33,7 @@ def detect_yogas(chart: KundliChart) -> List[YogaResult]:
                 else "Sun and Mercury are not together."
             ),
             meaning="Often linked with sharp intellect, articulate speech, and learning ability.",
+            kind="classical",
         )
     )
 
@@ -50,6 +52,7 @@ def detect_yogas(chart: KundliChart) -> List[YogaResult]:
                 else f"Jupiter is in the {from_moon}th from Moon - not a kendra."
             ),
             meaning="Classically associated with reputation, wisdom, and respectable standing.",
+            kind="classical",
         )
     )
 
@@ -65,6 +68,7 @@ def detect_yogas(chart: KundliChart) -> List[YogaResult]:
                 else "Moon and Mars are separate."
             ),
             meaning="Can indicate drive in earning and a forceful emotional/working style.",
+            kind="classical",
         )
     )
 
@@ -81,11 +85,11 @@ def detect_yogas(chart: KundliChart) -> List[YogaResult]:
                 f"Benefics in angular houses: {', '.join(benefics_in_kendra) or 'none'}."
             ),
             meaning="Supportive planets in angles often ease life direction, home, partnership, and career pillars.",
+            kind="note",
         )
     )
 
-    # Kahala yoga simplified: lords of 4th and 9th — we approximate by Saturn/Jupiter strength via house
-    # Viparita Raja: dusthana lords in dusthanas — simplified check for planets in 6/8/12
+    # Viparita Raja hint: planets in dusthanas
     dusthana = {6, 8, 12}
     in_dusthana = [name for name, pl in p.items() if pl.house in dusthana]
     results.append(
@@ -94,10 +98,11 @@ def detect_yogas(chart: KundliChart) -> List[YogaResult]:
             present=len(in_dusthana) >= 2,
             detail=f"In 6/8/12: {', '.join(in_dusthana) or 'none'}.",
             meaning="Not always negative - can show growth through service, research, or letting go; context matters.",
+            kind="note",
         )
     )
 
-    # Kemadruma (simplified): Moon with no planets in 2nd/12th from it (excluding Sun traditionally varies)
+    # Kemadruma (simplified)
     neighbors = set()
     for name, pl in p.items():
         if name in ("Moon", "Sun"):
@@ -105,10 +110,6 @@ def detect_yogas(chart: KundliChart) -> List[YogaResult]:
         rel = ((pl.house - moon_h) % 12) + 1
         if rel in (2, 12):
             neighbors.add(name)
-    kemadruma = len(neighbors) == 0 and p["Moon"].house not in {
-        pl.house for n, pl in p.items() if n != "Moon"
-    }
-    # Classic kemadruma also wants no planet with Moon; refine:
     with_moon = [n for n, pl in p.items() if n != "Moon" and pl.house == moon_h]
     kemadruma = len(neighbors) == 0 and len(with_moon) == 0
     results.append(
@@ -121,10 +122,10 @@ def detect_yogas(chart: KundliChart) -> List[YogaResult]:
                 else f"Moon support nearby: with={with_moon or 'none'}, 2nd/12th={sorted(neighbors) or 'none'}."
             ),
             meaning="If present, classical texts warn of mental loneliness; many cancellations exist - take lightly.",
+            kind="classical",
         )
     )
 
-    # Neptune unused — keep trikona occupancy note
     in_trikona = [n for n, pl in p.items() if pl.house in trikona]
     results.append(
         YogaResult(
@@ -132,6 +133,7 @@ def detect_yogas(chart: KundliChart) -> List[YogaResult]:
             present=len(in_trikona) >= 2,
             detail=f"In dharma trikonas: {', '.join(in_trikona) or 'none'}.",
             meaning="Activity in 1/5/9 often highlights purpose, creativity, and fortune themes.",
+            kind="note",
         )
     )
 
