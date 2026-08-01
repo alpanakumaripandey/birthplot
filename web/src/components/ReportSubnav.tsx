@@ -4,6 +4,7 @@ import type { CopyKey } from '../copy'
 
 const LINKS: { to: string; key: CopyKey }[] = [
   { to: '/report/you', key: 'reportYou' },
+  { to: '/report/summary', key: 'reportSummary' },
   { to: '/report/grahas', key: 'reportGrahas' },
   { to: '/report/houses', key: 'reportHouses' },
   { to: '/report/yogas', key: 'reportYogas' },

@@ -158,6 +158,7 @@ def serialize_interpretation(interp: dict) -> Dict[str, Any]:
         "dasha": interp["dasha"],
         "strengths": interp["strengths"],
         "life_areas": interp.get("life_areas", []),
+        "life_summary": interp.get("life_summary", []),
     }
 
 

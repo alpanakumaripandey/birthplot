@@ -409,11 +409,54 @@ export const COPY = {
   hideNumbers: { funky: 'Numbers chhupao', seedha: 'Hide table', sick: 'Hide numbers' },
 
   reportYou: { funky: 'Tu', seedha: 'You', sick: 'You' },
+  reportSummary: { funky: 'Summary', seedha: 'Summary', sick: 'Summary' },
   reportGrahas: { funky: 'Grahas', seedha: 'Grahas', sick: 'Grahas' },
   reportHouses: { funky: 'Kamre', seedha: 'Houses', sick: 'Houses' },
   reportYogas: { funky: 'Yogas', seedha: 'Yogas', sick: 'Yogas' },
   reportTiming: { funky: 'Timing', seedha: 'Timing', sick: 'Timing' },
   reportAsk: { funky: 'Poochho', seedha: 'Ask', sick: 'Ask' },
+
+  summaryTitle: {
+    funky: 'Life summary — bade sawaal, seedha jawab',
+    seedha: 'Life summary',
+    sick: 'Life summary — big questions, clear reads',
+  },
+  summaryLede: {
+    funky: 'Career, rishta, money, health — common life questions with timing windows from your chart.',
+    seedha:
+      'Straight answers to common questions on career, money, relationships, health, and life path — with supportive timing windows from your chart.',
+    sick: 'Career, love, money, health — the questions people actually ask, with timing color from your chart.',
+  },
+  summaryNote: {
+    funky: 'Tendencies + timing colors — fate ka stamp nahi. Choices abhi bhi tumhari.',
+    seedha: 'These are tendencies and timing colors, not fixed fate. Your choices still matter.',
+    sick: 'Tendencies and timing — not destiny stamps. Your moves still count.',
+  },
+  summaryEmpty: {
+    funky: 'Summary ke liye chart dubara cast karo.',
+    seedha: 'Re-cast your chart to load the life summary.',
+    sick: 'Re-cast to unlock summary.',
+  },
+  summaryOpen: {
+    funky: 'Poora jawab →',
+    seedha: 'Read full answer →',
+    sick: 'Open full answer →',
+  },
+  summaryAskHint: {
+    funky: 'Aur detail chahiye?',
+    seedha: 'Want a deeper dive?',
+    sick: 'Want more heat on a topic?',
+  },
+  summaryAskLink: {
+    funky: 'Ask pe jao',
+    seedha: 'Go to Ask',
+    sick: 'Jump to Ask',
+  },
+  summaryAskMore: {
+    funky: 'Is topic pe Ask kholo',
+    seedha: 'Ask more on this topic',
+    sick: 'Ask more on this',
+  },
 
   settingsTitle: {
     funky: 'Settings — apna vibe set karo',

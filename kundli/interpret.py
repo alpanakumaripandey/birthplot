@@ -7,6 +7,7 @@ from typing import List
 from kundli.chart import KundliChart
 from kundli.dasha import DashaTimeline
 from kundli.knowledge_loader import houses, nakshatras, planets, rashis
+from kundli.life_summary import build_life_summary
 from kundli.yogas import YogaResult, detect_yogas
 
 
@@ -202,4 +203,5 @@ def build_interpretation(chart: KundliChart, timeline: DashaTimeline) -> dict:
         "dasha": dasha_summary(timeline),
         "strengths": strengths_summary(chart, yoga_list),
         "life_areas": life_area_briefs(chart, timeline),
+        "life_summary": build_life_summary(chart, timeline),
     }

@@ -72,6 +72,16 @@ export type LifeArea = {
   planets: string[]
 }
 
+export type LifeSummaryItem = {
+  id: string
+  category: string
+  category_label: string
+  question: string
+  answer: string
+  ask_topic: string
+  timing_hint?: string
+}
+
 export type Interpretation = {
   disclaimer: string
   lagna: string
@@ -82,6 +92,7 @@ export type Interpretation = {
   dasha: string[]
   strengths: string[]
   life_areas?: LifeArea[]
+  life_summary?: LifeSummaryItem[]
 }
 
 export type Timeline = {

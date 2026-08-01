@@ -10,6 +10,7 @@ import { ReportAsk } from './pages/ReportAsk'
 import { ReportGrahas } from './pages/ReportGrahas'
 import { ReportHouses } from './pages/ReportHouses'
 import { ReportIndex } from './pages/ReportIndex'
+import { ReportSummary } from './pages/ReportSummary'
 import { ReportTiming } from './pages/ReportTiming'
 import { ReportYou } from './pages/ReportYou'
 import { ReportYogas } from './pages/ReportYogas'
@@ -26,6 +27,7 @@ export default function App() {
               <Route path="cast" element={<Cast />} />
               <Route path="report" element={<ReportIndex />} />
               <Route path="report/you" element={<ReportYou />} />
+              <Route path="report/summary" element={<ReportSummary />} />
               <Route path="report/grahas" element={<ReportGrahas />} />
               <Route path="report/houses" element={<ReportHouses />} />
               <Route path="report/yogas" element={<ReportYogas />} />
