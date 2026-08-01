@@ -417,33 +417,29 @@ export const COPY = {
   reportAsk: { funky: 'Poochho', seedha: 'Ask', sick: 'Ask' },
 
   summaryTitle: {
-    funky: 'Jyotish reading — ek consult, poori map',
-    seedha: 'Jyotish consult summary',
-    sick: 'One Jyotish consult — full time map',
+    funky: 'Past · Present · Future',
+    seedha: 'Past · Present · Future',
+    sick: 'Past · Present · Future',
   },
   summaryLede: {
-    funky:
-      'Ek flowing reading: dasha, career/wealth, vivah/dosha, health, phir upaya — jaise live Jyotishi baat kare.',
-    seedha:
-      'One continuous Vedic reading: current dasha, career and wealth, marriage and dosha, health, then remedies — like a live consult, not separate cards.',
-    sick:
-      'One consult scroll: dasha → career/money → marriage/dosha → health → upaya. No card farm.',
+    funky: 'Chart foundation, current dasha, upcoming windows.',
+    seedha: 'Chart foundation, current dasha, upcoming windows.',
+    sick: 'Chart foundation, current dasha, upcoming windows.',
   },
   summaryNote: {
-    funky: 'Predictive guidance + classical upaya — fate ka rubber stamp nahi. Medical/legal/finance alag.',
-    seedha:
-      'Educational Jyotish guidance and classical-style remedies — not fixed fate, and not medical, legal, or financial advice.',
-    sick: 'Timing + upaya, not destiny stamps. Not medical/legal/finance advice.',
+    funky: '',
+    seedha: '',
+    sick: '',
   },
   summaryEmpty: {
-    funky: 'Naye consult reading ke liye chart dubara cast karo.',
-    seedha: 'Re-cast your chart to load the single Jyotish consult summary.',
-    sick: 'Re-cast to unlock the one-piece consult reading.',
+    funky: 'Chart dubara cast karo for this summary.',
+    seedha: 'Re-cast your chart to load this summary.',
+    sick: 'Re-cast to load this summary.',
   },
   summaryRemedyFocus: {
-    funky: 'Upaya focus grahas:',
-    seedha: 'Remedy focus planets:',
-    sick: 'Upaya grahas:',
+    funky: '',
+    seedha: '',
+    sick: '',
   },
   summaryOpen: {
     funky: 'Poora padho →',

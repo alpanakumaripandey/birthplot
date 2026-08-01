@@ -2607,8 +2607,22 @@ select {
   margin: var(--space-4) 0;
 }
 
-.summary-consult-body {
-  gap: 1.1rem;
+.summary-block {
+  margin: 0;
+  padding-top: 0.35rem;
+}
+
+.summary-block + .summary-block {
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+  margin-top: 0.35rem;
+}
+
+.summary-block h2 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  margin: 0 0 0.4rem;
+  color: var(--brass);
 }
 
 .summary-panels {
