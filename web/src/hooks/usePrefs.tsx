@@ -16,12 +16,15 @@ type Prefs = {
   theme: ThemeMode
   motion: MotionMode
   lingo: LingoMode
+  sound: boolean
   setTheme: (t: ThemeMode) => void
   setMotion: (m: MotionMode) => void
   setLingo: (l: LingoMode) => void
+  setSound: (on: boolean) => void
   toggleTheme: () => void
   toggleMotion: () => void
   toggleLingo: () => void
+  toggleSound: () => void
 }
 
 const PrefsContext = createContext<Prefs | null>(null)
@@ -30,12 +33,24 @@ const KEYS = {
   theme: 'birthplot_theme',
   motion: 'birthplot_motion',
   lingo: 'birthplot_lingo',
+  sound: 'birthplot_sound',
 } as const
 
 function read<T extends string>(key: string, fallback: T, allowed: T[]): T {
   try {
     const v = localStorage.getItem(key) as T | null
     if (v && allowed.includes(v)) return v
+  } catch {
+    /* ignore */
+  }
+  return fallback
+}
+
+function readBool(key: string, fallback: boolean): boolean {
+  try {
+    const v = localStorage.getItem(key)
+    if (v === '1' || v === 'true') return true
+    if (v === '0' || v === 'false') return false
   } catch {
     /* ignore */
   }
@@ -71,6 +86,7 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
   const [lingo, setLingoState] = useState<LingoMode>(() =>
     read(KEYS.lingo, 'funky', ['funky', 'seedha', 'sick']),
   )
+  const [sound, setSoundState] = useState<boolean>(() => readBool(KEYS.sound, true))
 
   useEffect(() => {
     applyAttrs(theme, motion, lingo)
@@ -88,28 +104,31 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
     setLingoState(l)
     localStorage.setItem(KEYS.lingo, l)
   }, [])
+  const setSound = useCallback((on: boolean) => {
+    setSoundState(on)
+    localStorage.setItem(KEYS.sound, on ? '1' : '0')
+  }, [])
 
   const value = useMemo<Prefs>(
     () => ({
       theme,
       motion,
       lingo,
+      sound,
       setTheme,
       setMotion,
       setLingo,
+      setSound,
       toggleTheme: () => setTheme(theme === 'ratri' ? 'day' : 'ratri'),
       toggleMotion: () => setMotion(motion === 'calm' ? 'drama' : 'calm'),
       toggleLingo: () =>
         setLingo(lingo === 'funky' ? 'sick' : lingo === 'sick' ? 'seedha' : 'funky'),
+      toggleSound: () => setSound(!sound),
     }),
-    [theme, motion, lingo, setTheme, setMotion, setLingo],
+    [theme, motion, lingo, sound, setTheme, setMotion, setLingo, setSound],
   )
 
-  return (
-    <PrefsContext.Provider value={value}>
-      {children}
-    </PrefsContext.Provider>
-  )
+  return <PrefsContext.Provider value={value}>{children}</PrefsContext.Provider>
 }
 
 export function usePrefs() {

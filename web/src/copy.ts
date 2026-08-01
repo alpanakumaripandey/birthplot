@@ -528,6 +528,24 @@ export const COPY = {
     seedha: 'Reduced motion for a quieter reading experience.',
     sick: 'Chill motion — content first, less float.',
   },
+  settingsSound: { funky: 'Sound', seedha: 'Sound', sick: 'Sound' },
+  settingsSoundHint: {
+    funky: 'Soft taps & cast chimes. Off = silence.',
+    seedha: 'Soft UI sounds on cast, drawers, and toggles. Off mutes them.',
+    sick: 'Soft taps and cast chimes — flip off for silence.',
+  },
+  soundOn: { funky: 'On', seedha: 'On', sick: 'On' },
+  soundOnBlurb: {
+    funky: 'Tiny brass/jade tones when you cast or open drawers.',
+    seedha: 'Play soft feedback sounds for key actions.',
+    sick: 'Soft tones on cast, drawers, toggles.',
+  },
+  soundOff: { funky: 'Off', seedha: 'Off', sick: 'Off' },
+  soundOffBlurb: {
+    funky: 'No beeps. Pure visual.',
+    seedha: 'Mute all UI sounds.',
+    sick: 'Silence mode.',
+  },
 
   howTitle: {
     funky: 'Birthplot ka jugad',

@@ -7,6 +7,7 @@ import { InkBurst } from '../components/InkBurst'
 import { MagneticButton } from '../components/MagneticButton'
 import { OrbitLoader } from '../components/OrbitLoader'
 import { useLingo } from '../hooks/useLingo'
+import { useSound } from '../hooks/useSound'
 
 type Demo = {
   name: string
@@ -56,6 +57,7 @@ export function Cast() {
   const navigate = useNavigate()
   const { setReport } = useChart()
   const { t } = useLingo()
+  const { play } = useSound()
   const [step, setStep] = useState(0)
   const [name, setName] = useState('')
   const [date, setDate] = useState('')
@@ -145,6 +147,7 @@ export function Cast() {
       setReport(report)
       setLoading(false)
       setBurst(true)
+      play('success')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Casting failed')
       setLoading(false)

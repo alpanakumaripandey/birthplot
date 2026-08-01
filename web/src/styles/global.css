@@ -283,6 +283,49 @@ select {
   padding: var(--space-6) 0 var(--space-7);
 }
 
+.starfield-3d {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.hero-gif-sky {
+  position: absolute;
+  right: 4%;
+  top: 12%;
+  width: min(14rem, 38vw);
+  opacity: 0.45;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 2;
+  border: 1px solid var(--line);
+}
+
+.hero-gif-orbit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7.5rem;
+  height: 7.5rem;
+  transform: translate(-50%, -50%);
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 2;
+}
+
+[data-theme='day'] .hero-gif-sky {
+  mix-blend-mode: multiply;
+  opacity: 0.35;
+}
+
+[data-motion='calm'] .starfield-3d,
+[data-motion='calm'] .hero-gif-sky,
+[data-motion='calm'] .hero-gif-orbit {
+  display: none;
+}
+
 .hero-copy {
   position: relative;
   z-index: 3;

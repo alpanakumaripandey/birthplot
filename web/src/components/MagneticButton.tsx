@@ -17,6 +17,7 @@ type BtnProps = Common & {
 type LinkProps = Common & {
   as: 'link'
   to: string
+  onClick?: () => void
 }
 
 type Props = BtnProps | LinkProps
@@ -56,6 +57,7 @@ export function MagneticButton(props: Props) {
         ref={ref as never}
         to={props.to}
         className={cls}
+        onClick={props.onClick}
         onMouseMove={onMove}
         onMouseLeave={onLeave}
       >

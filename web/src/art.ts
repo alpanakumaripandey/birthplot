@@ -51,4 +51,11 @@ export const HOW_STEP_ART = {
   dasha: '/art/how-dasha.png',
 } as const
 
+/** Real looping GIF assets */
+export const LOOP_GIF = {
+  nakshatra: '/art/loop-nakshatra.gif',
+  orbit: '/art/loop-orbit.gif',
+  ink: '/art/loop-ink.gif',
+} as const
+
 export const GRAHA_NAMES = Object.keys(GRAHA_ART)

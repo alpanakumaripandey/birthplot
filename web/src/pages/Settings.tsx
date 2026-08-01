@@ -1,5 +1,6 @@
 import { usePrefs, type LingoMode, type MotionMode, type ThemeMode } from '../hooks/usePrefs'
 import { useLingo } from '../hooks/useLingo'
+import { useSound } from '../hooks/useSound'
 
 type RowProps<T extends string> = {
   label: string
@@ -37,7 +38,8 @@ function SettingRow<T extends string>({ label, hint, value, options, onChange }:
 
 export function Settings() {
   const { t } = useLingo()
-  const { theme, setTheme, lingo, setLingo, motion, setMotion } = usePrefs()
+  const { theme, setTheme, lingo, setLingo, motion, setMotion, sound, setSound } = usePrefs()
+  const { play } = useSound()
 
   return (
     <section className="section wrap page-enter settings-page">
@@ -48,7 +50,10 @@ export function Settings() {
         label={t('settingsTheme')}
         hint={t('settingsThemeHint')}
         value={theme}
-        onChange={setTheme}
+        onChange={(v) => {
+          setTheme(v)
+          play('toggle')
+        }}
         options={[
           {
             id: 'day',
@@ -67,7 +72,10 @@ export function Settings() {
         label={t('settingsLingo')}
         hint={t('settingsLingoHint')}
         value={lingo}
-        onChange={setLingo}
+        onChange={(v) => {
+          setLingo(v)
+          play('toggle')
+        }}
         options={[
           {
             id: 'funky',
@@ -91,7 +99,10 @@ export function Settings() {
         label={t('settingsMotion')}
         hint={t('settingsMotionHint')}
         value={motion}
-        onChange={setMotion}
+        onChange={(v) => {
+          setMotion(v)
+          play('toggle')
+        }}
         options={[
           {
             id: 'drama',
@@ -102,6 +113,28 @@ export function Settings() {
             id: 'calm',
             title: t('motionCalm'),
             blurb: t('motionCalmBlurb'),
+          },
+        ]}
+      />
+
+      <SettingRow<'on' | 'off'>
+        label={t('settingsSound')}
+        hint={t('settingsSoundHint')}
+        value={sound ? 'on' : 'off'}
+        onChange={(v) => {
+          setSound(v === 'on')
+          if (v === 'on') play('toggle')
+        }}
+        options={[
+          {
+            id: 'on',
+            title: t('soundOn'),
+            blurb: t('soundOnBlurb'),
+          },
+          {
+            id: 'off',
+            title: t('soundOff'),
+            blurb: t('soundOffBlurb'),
           },
         ]}
       />

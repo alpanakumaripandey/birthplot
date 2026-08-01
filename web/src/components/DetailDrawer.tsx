@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react'
+import { useSound } from '../hooks/useSound'
 
 type Props = {
   open: boolean
@@ -13,6 +14,13 @@ export function DetailDrawer({ open, title, subtitle, art, onClose, children }: 
   const closeRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLElement>(null)
   const titleId = useId()
+  const { play } = useSound()
+  const wasOpen = useRef(false)
+
+  useEffect(() => {
+    if (open && !wasOpen.current) play('drawer')
+    wasOpen.current = open
+  }, [open, play])
 
   useEffect(() => {
     if (!open) return
