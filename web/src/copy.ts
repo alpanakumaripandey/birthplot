@@ -422,10 +422,10 @@ export const COPY = {
     sick: 'Life summary — what’s clearly visible',
   },
   summaryLede: {
-    funky: 'Career, rishta, money, health — seedha insights, timing chips ke saath. Sawalon ki list nahi.',
+    funky: 'Career, rishta, money, health — chart facts + clear verdicts, timing ke saath.',
     seedha:
-      'Clear insights on career, money, relationships, health, and life path — written as what’s visible in your chart, with timing windows.',
-    sick: 'Career, love, money, health — the visible read, not a quiz of questions.',
+      'Chart-based facts and clear verdicts on career, money, relationships, health, and life path — with ranked timing windows.',
+    sick: 'Facts from the chart, clean verdicts, ranked timing — not vibes-only copy.',
   },
   summaryNote: {
     funky: 'Tendencies + timing colors — fate ka stamp nahi. Choices abhi bhi tumhari.',
@@ -433,9 +433,9 @@ export const COPY = {
     sick: 'Tendencies and timing — not destiny stamps. Your moves still count.',
   },
   summaryEmpty: {
-    funky: 'Naye insights ke liye chart dubara cast karo.',
-    seedha: 'Re-cast your chart to load the latest life insights.',
-    sick: 'Re-cast to unlock the new insight panels.',
+    funky: 'Naye rule-based insights ke liye chart dubara cast karo.',
+    seedha: 'Re-cast your chart to load the updated, rule-based life summary.',
+    sick: 'Re-cast to unlock the tighter summary engine.',
   },
   summaryOpen: {
     funky: 'Poora padho →',

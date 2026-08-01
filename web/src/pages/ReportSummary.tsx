@@ -9,7 +9,9 @@ export function ReportSummary() {
   const { t } = useLingo()
   const revealRef = useReveal<HTMLDivElement>()
   const panels = report?.interpretation.life_summary ?? []
-  const isInsightPanel = panels.some((p) => Array.isArray(p.insights) && p.insights.length > 0)
+  const ready = panels.some(
+    (p) => p.version === 'deterministic-v1' && Array.isArray(p.insights) && p.insights.length > 0,
+  )
 
   return (
     <ReportGate>
@@ -21,7 +23,7 @@ export function ReportSummary() {
             <p className="summary-note">{t('summaryNote')}</p>
           </header>
 
-          {!isInsightPanel ? (
+          {!ready ? (
             <div className="empty-panel">
               <p>{t('summaryEmpty')}</p>
               <Link className="btn" to="/cast">
