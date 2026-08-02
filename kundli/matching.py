@@ -665,6 +665,134 @@ def _verdict_pack(total: float, a: str, b: str, weak_n: int) -> Tuple[str, str, 
     return verdict, summary, overall_solutions
 
 
+GUNA_SIMPLE = {
+    "varna": "In simple words: do your values, pride, and life outlook feel equal?",
+    "vashya": "In simple words: can you influence each other kindly, without constant power fights?",
+    "tara": "In simple words: do your birth stars support luck and teamwork together?",
+    "yoni": "In simple words: do comfort, attraction, and private closeness feel natural?",
+    "graha_maitri": "In simple words: do your minds understand each other and repair after stress?",
+    "gana": "In simple words: do your basic temperaments (calm, practical, intense) fit day to day?",
+    "bhakoot": "In simple words: does emotional weather at home and with family usually feel steady?",
+    "nadi": "In simple words: does the traditional health-and-family axis look clear between you?",
+}
+
+
+def _full_overview(
+    *,
+    a: str,
+    b: str,
+    total: float,
+    verdict: str,
+    summary: str,
+    a_rashi: str,
+    a_nak: str,
+    a_pada: int,
+    b_rashi: str,
+    b_nak: str,
+    b_pada: int,
+    strengths: List[Dict[str, Any]],
+    weak: List[Dict[str, Any]],
+    ok_issues: List[Dict[str, Any]],
+    manglik_note: str,
+    manglik_problem: str | None,
+) -> Dict[str, Any]:
+    """Plain-language full picture for the Match page."""
+    what_it_is = (
+        f"Kundali matching (Ashtakoota) compares {a} and {b} using mainly the Moon — "
+        "the mind, habits, and emotional comfort of each person. There are eight gunas "
+        "(qualities) adding up to 36 points. Think of it as a relationship weather report: "
+        "it shows where nature helps, where effort is needed, and what to talk about before marriage. "
+        "It does not replace love, character, counselling, or a doctor."
+    )
+
+    score_means = (
+        f"Their score is {total:g} out of 36 — “{verdict}”. "
+        f"{summary} "
+        "As a rough guide: 28+ is traditionally excellent, 24–27 very good, 18–23 workable with effort, "
+        "below 18 asks for extra care and often a second opinion."
+    )
+
+    moons = (
+        f"{a}’s Moon sits in {a_rashi}, birth star {a_nak} (pada {a_pada}). "
+        f"{b}’s Moon sits in {b_rashi}, birth star {b_nak} (pada {b_pada}). "
+        "Almost every guna below is built from these two Moon placements."
+    )
+
+    if strengths:
+        bits = "; ".join(
+            f"{k['title']} scored {k['score']:g}/{k['max']}" for k in strengths
+        )
+        strong_para = (
+            f"What already works in simple words: {bits}. "
+            "These areas are natural supports — keep them alive with appreciation and shared habits."
+        )
+    else:
+        strong_para = (
+            "No guna landed in the top “strong” band. That does not cancel the match, "
+            "but it means daily effort and clear talk matter more than luck."
+        )
+
+    if weak:
+        bits = "; ".join(
+            f"{k['title']} ({k['score']:g}/{k['max']})"
+            + (f" — {k['problem']}" if k.get("problem") else "")
+            for k in weak
+        )
+        weak_para = (
+            f"Where the chart asks for care: {bits}. "
+            "Each of these has practical solutions further down — treat them as a to-do list, not a scare list."
+        )
+    else:
+        weak_para = (
+            "No guna scored in the weak band. Still skim any “Okay” sections so small gaps do not grow later."
+        )
+
+    if ok_issues:
+        mid = "; ".join(k["title"] for k in ok_issues)
+        mid_para = (
+            f"Mixed / okay areas that still deserve a talk: {mid}. "
+            "They are not disasters, but small habits here prevent bigger fights."
+        )
+    else:
+        mid_para = ""
+
+    manglik_para = f"Separate Mars (Manglik) check: {manglik_note}"
+    if manglik_problem:
+        manglik_para += f" Issue in plain words: {manglik_problem}"
+
+    bottom = (
+        f"Bottom line for {a} and {b}: read the full picture — score, strengths, watch-outs, Manglik — "
+        "then use the solutions. Strong gunas are gifts; weak gunas are homework. "
+        "If Nadi or Bhakoot is weak, or the total is low, pause wedding pressure and get a fuller Jyotish consult."
+    )
+
+    paragraphs = [
+        what_it_is,
+        score_means,
+        moons,
+        strong_para,
+        weak_para,
+    ]
+    if mid_para:
+        paragraphs.append(mid_para)
+    paragraphs.extend([manglik_para, bottom])
+
+    guide = [
+        {"id": kid, "title": title, "simple": GUNA_SIMPLE[kid]}
+        for kid, title in (
+            ("varna", "Values & outlook"),
+            ("vashya", "Influence & give-and-take"),
+            ("tara", "Timing & mutual support"),
+            ("yoni", "Comfort & intimacy"),
+            ("graha_maitri", "Mental friendship"),
+            ("gana", "Temperament fit"),
+            ("bhakoot", "Emotional harmony"),
+            ("nadi", "Health & family axis"),
+        )
+    ]
+
+    return {"paragraphs": paragraphs, "guna_guide": guide}
+
 def _manglik_pack(
     mang_a: bool,
     mang_b: bool,
@@ -757,6 +885,7 @@ def match_charts(person_a: KundliChart, person_b: KundliChart) -> Dict[str, Any]
                 "score": score,
                 "level": level,
                 "detail": detail,
+                "simple": GUNA_SIMPLE[kid],
                 "explanation": copy["explanation"],
                 "problem": copy.get("problem"),
                 "solutions": copy.get("solutions") or [],
@@ -777,6 +906,25 @@ def match_charts(person_a: KundliChart, person_b: KundliChart) -> Dict[str, Any]
         mang_a, mang_b, mang_a_d, mang_b_d, a_name, b_name
     )
 
+    overview = _full_overview(
+        a=a_name,
+        b=b_name,
+        total=total,
+        verdict=verdict,
+        summary=summary,
+        a_rashi=a_rashi,
+        a_nak=a_nak_name,
+        a_pada=person_a.moon_pada,
+        b_rashi=b_rashi,
+        b_nak=b_nak_name,
+        b_pada=person_b.moon_pada,
+        strengths=strengths,
+        weak=weak,
+        ok_issues=ok_issues,
+        manglik_note=manglik_note,
+        manglik_problem=manglik_problem,
+    )
+
     action_plan: List[str] = list(overall_solutions)
     for k in weak + ok_issues:
         for sol in k["solutions"][:2]:
@@ -787,11 +935,13 @@ def match_charts(person_a: KundliChart, person_b: KundliChart) -> Dict[str, Any]
             action_plan.append(sol)
 
     return {
-        "version": "ashtakoota-v3",
+        "version": "ashtakoota-v4",
         "total": total,
         "max": max_total,
         "verdict": verdict,
         "summary": summary,
+        "overview": overview["paragraphs"],
+        "guna_guide": overview["guna_guide"],
         "action_plan": action_plan[:8],
         "strengths": [
             {"name": k["name"], "title": k["title"], "score": k["score"], "max": k["max"]}

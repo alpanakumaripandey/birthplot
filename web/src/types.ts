@@ -158,6 +158,7 @@ export type MatchKoota = {
   score: number
   level?: 'strong' | 'ok' | 'weak'
   detail: string
+  simple?: string
   explanation?: string
   problem?: string | null
   solutions?: string[]
@@ -172,12 +173,20 @@ export type MatchHighlight = {
   problem?: string | null
 }
 
+export type MatchGunaGuide = {
+  id: string
+  title: string
+  simple: string
+}
+
 export type MatchReport = {
   version: string
   total: number
   max: number
   verdict: string
   summary?: string
+  overview?: string[]
+  guna_guide?: MatchGunaGuide[]
   action_plan?: string[]
   strengths?: MatchHighlight[]
   watchouts?: MatchHighlight[]

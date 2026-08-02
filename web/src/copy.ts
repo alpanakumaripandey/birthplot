@@ -498,6 +498,16 @@ export const COPY = {
     seedha: 'What to do next',
     sick: 'Do this next',
   },
+  matchOverview: {
+    funky: 'Poori picture — seedhi baat',
+    seedha: 'Full summary in simple words',
+    sick: 'The whole picture — plain English',
+  },
+  matchGunaGuide: {
+    funky: 'Har guna kya poochhta hai',
+    seedha: 'What each guna asks',
+    sick: 'What each guna is asking',
+  },
   matchProblem: { funky: 'Issue', seedha: 'The issue', sick: 'The issue' },
   matchSolutions: { funky: 'Solutions', seedha: 'Solutions', sick: 'Fixes' },
   matchManglik: { funky: 'Manglik check', seedha: 'Manglik check', sick: 'Manglik check' },

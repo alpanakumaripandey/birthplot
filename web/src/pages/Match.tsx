@@ -238,13 +238,36 @@ export function Match() {
               <span> / {result.max}</span>
             </p>
             <p className="match-verdict">{result.verdict}</p>
-            {result.summary ? <p className="match-summary">{result.summary}</p> : null}
           </div>
+
+          {result.overview && result.overview.length > 0 ? (
+            <div className="match-overview">
+              <h2>{t('matchOverview')}</h2>
+              {result.overview.map((para) => (
+                <p key={para.slice(0, 48)}>{para}</p>
+              ))}
+            </div>
+          ) : result.summary ? (
+            <p className="match-summary">{result.summary}</p>
+          ) : null}
 
           <div className="match-pair-moons">
             <MoonLine person={result.person_a} />
             <MoonLine person={result.person_b} />
           </div>
+
+          {result.guna_guide && result.guna_guide.length > 0 ? (
+            <div className="match-guna-guide">
+              <h2>{t('matchGunaGuide')}</h2>
+              <ul>
+                {result.guna_guide.map((g) => (
+                  <li key={g.id}>
+                    <strong>{g.title}</strong> — {g.simple.replace(/^In simple words:\s*/i, '')}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
 
           {result.action_plan && result.action_plan.length > 0 ? (
             <div className="match-action-plan">
@@ -308,6 +331,7 @@ export function Match() {
                 <div className="match-koota-bar" aria-hidden>
                   <span style={{ width: `${Math.min(100, (k.score / k.max) * 100)}%` }} />
                 </div>
+                {k.simple ? <p className="match-koota-simple">{k.simple}</p> : null}
                 <p className="match-koota-detail">
                   {k.explanation ?? k.note ?? k.detail}
                 </p>
