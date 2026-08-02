@@ -352,8 +352,6 @@ export function Match() {
             ) : null}
           </div>
 
-          <p className="match-convention">{result.convention}</p>
-
           <button
             type="button"
             className="btn"

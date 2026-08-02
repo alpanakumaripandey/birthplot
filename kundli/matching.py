@@ -673,14 +673,12 @@ def _manglik_pack(
     a: str,
     b: str,
 ) -> Tuple[str, str, str | None, List[str]]:
-    """title, explanation, problem|None, solutions."""
+    """title, one-line note, problem|None, solutions."""
     if mang_a and mang_b:
         return (
             "Both show Manglik",
-            f"{a} ({detail_a}) and {b} ({detail_b}) both have Mars in a Manglik house (1, 4, 7, 8, or 12). "
-            "Many traditions treat two Manglik partners as mutually balancing. "
-            "Energy and courage can be high — so can temper if untrained.",
-            "Possible early-year heat: impatience, sharp speech, or rushed decisions under stress.",
+            f"Both Manglik — often treated as balancing ({a}: {detail_a}; {b}: {detail_b}).",
+            "Energy and courage can run high; temper and haste may spike in early marriage years if untrained.",
             [
                 "Promise a “cool-down” rule: no final decisions during anger; walk first.",
                 "Channel Mars into sport, disciplined work, or service — not into winning every argument.",
@@ -692,8 +690,7 @@ def _manglik_pack(
     if not mang_a and not mang_b:
         return (
             "No Manglik flag",
-            f"Neither {a} nor {b} has Mars in the classic Manglik houses. "
-            "This separate Mars check looks clear beside the 36‑point guna score.",
+            f"Neither {a} nor {b} is Manglik on the classic Mars houses.",
             None,
             [],
         )
@@ -702,9 +699,8 @@ def _manglik_pack(
     other = b if mang_a else a
     return (
         "Manglik on one side",
-        f"{who} shows Manglik ({det}); {other} does not. "
-        "Older matching often asks for extra care because Mars heat on one side can feel unmatched.",
-        "Traditional concern for friction, delay, or temper imbalance in marriage timing — not an automatic ban.",
+        f"Only {who} is Manglik ({det}); {other} is not.",
+        "Traditional concern for friction, delay, or temper imbalance — not an automatic ban.",
         [
             f"Discuss openly: how {who} handles anger and haste, and how {other} needs safety.",
             "Ask a Jyotishi whether Venus/Jupiter placements cancel or soften Manglik for this chart.",
@@ -832,9 +828,5 @@ def match_charts(person_a: KundliChart, person_b: KundliChart) -> Dict[str, Any]
         "manglik_note": manglik_note,
         "manglik_problem": manglik_problem,
         "manglik_solutions": manglik_solutions,
-        "convention": (
-            f"Person A ({a_name}) is bride-side and Person B ({b_name}) is groom-side "
-            "for Varna, Vashya, and Tara. Explanations and remedies are educational Jyotish guidance — "
-            "not medical, legal, financial, or destiny decrees. For health or pregnancy concerns, see a doctor."
-        ),
+        "convention": "",
     }
