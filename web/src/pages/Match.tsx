@@ -246,6 +246,17 @@ export function Match() {
             <MoonLine person={result.person_b} />
           </div>
 
+          {result.action_plan && result.action_plan.length > 0 ? (
+            <div className="match-action-plan">
+              <h2>{t('matchActionPlan')}</h2>
+              <ol>
+                {result.action_plan.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
+            </div>
+          ) : null}
+
           {(result.strengths?.length || result.watchouts?.length) ? (
             <div className="match-highlights">
               {result.strengths && result.strengths.length > 0 ? (
@@ -267,6 +278,7 @@ export function Match() {
                     {result.watchouts.map((s) => (
                       <li key={s.name}>
                         <strong>{s.title}</strong> ({s.name}) — {fmtScore(s.score)}/{s.max}
+                        {s.problem ? <span className="match-watch-problem"> — {s.problem}</span> : null}
                       </li>
                     ))}
                   </ul>
@@ -282,7 +294,7 @@ export function Match() {
                 <div className="match-koota-head">
                   <div>
                     <strong>{k.title ?? k.name}</strong>
-                    <span className="match-koota-classic">{k.name}</span>
+                    <span className="match-koota-classic">{k.name} · {k.detail}</span>
                   </div>
                   <div className="match-koota-meta">
                     <span className={`match-level match-level--${k.level ?? 'ok'}`}>
@@ -299,6 +311,22 @@ export function Match() {
                 <p className="match-koota-detail">
                   {k.explanation ?? k.note ?? k.detail}
                 </p>
+                {k.problem ? (
+                  <div className="match-issue">
+                    <h3>{t('matchProblem')}</h3>
+                    <p>{k.problem}</p>
+                  </div>
+                ) : null}
+                {k.solutions && k.solutions.length > 0 ? (
+                  <div className="match-solutions">
+                    <h3>{t('matchSolutions')}</h3>
+                    <ul>
+                      {k.solutions.map((sol) => (
+                        <li key={sol}>{sol}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
               </li>
             ))}
           </ul>
@@ -306,6 +334,22 @@ export function Match() {
           <div className="match-manglik">
             <h2>{result.manglik_title ?? t('matchManglik')}</h2>
             <p>{result.manglik_note}</p>
+            {result.manglik_problem ? (
+              <div className="match-issue">
+                <h3>{t('matchProblem')}</h3>
+                <p>{result.manglik_problem}</p>
+              </div>
+            ) : null}
+            {result.manglik_solutions && result.manglik_solutions.length > 0 ? (
+              <div className="match-solutions">
+                <h3>{t('matchSolutions')}</h3>
+                <ul>
+                  {result.manglik_solutions.map((sol) => (
+                    <li key={sol}>{sol}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </div>
 
           <p className="match-convention">{result.convention}</p>

@@ -339,158 +339,330 @@ def _level(score: float, max_pts: float) -> str:
     return "weak"
 
 
-def _explain_varna(score: float, detail: str, a: str, b: str) -> str:
+def _pack(
+    explanation: str,
+    *,
+    problem: str | None = None,
+    solutions: List[str] | None = None,
+) -> Dict[str, Any]:
+    return {
+        "explanation": explanation,
+        "problem": problem,
+        "solutions": solutions or [],
+    }
+
+
+def _varna_copy(score: float, detail: str, a: str, b: str) -> Dict[str, Any]:
+    base = (
+        f"Varna looks at the Moon-sign “outlook class” of each person ({detail}). "
+        f"It hints whether {a} and {b} feel equal in values, dignity, and life seriousness — "
+        "not caste in the social sense, but ego and worldview fit."
+    )
     if score >= 1:
-        return (
-            f"{a} and {b} sit in compatible life-outlook bands ({detail}). "
-            "Ego and values usually line up without one person feeling looked down on."
+        return _pack(
+            base
+            + f" Here the bands support each other: neither is likely to feel chronically "
+            f"looked down on or spiritually mismatched."
         )
-    return (
-        f"Outlook bands differ ({detail}). One partner may expect more status or "
-        "spiritual seriousness than the other — talk early about lifestyle and goals."
+    return _pack(
+        base
+        + " Here the bands differ, so one partner may push harder on status, ritual, "
+        "career pride, or “how a household should look,” while the other wants a simpler pace.",
+        problem=(
+            "Risk of quiet superiority / inferiority feelings, or arguments about lifestyle "
+            "standards, family image, and long-term goals."
+        ),
+        solutions=[
+            "Write down three non‑negotiable values each (money, faith, career, family duty) and compare honestly before marriage talks harden.",
+            "Agree that respect is equal even if habits differ — no mocking of education, job, or devotion style.",
+            "Classical support: Thursday charity (chana / yellow cloth) and a short Guru mantra together once a week to soften ego friction.",
+            "If families pressure status, set a united couple boundary early so outsiders cannot widen the gap.",
+        ],
     )
 
 
-def _explain_vashya(score: float, detail: str, a: str, b: str) -> str:
+def _vashya_copy(score: float, detail: str, a: str, b: str) -> Dict[str, Any]:
+    base = (
+        f"Vashya checks natural influence — who leads, who yields ({detail}). "
+        f"It shows whether {a} and {b} can steer each other kindly or get stuck in control battles."
+    )
     if score >= 2:
-        return (
-            f"Natural give-and-take looks smooth ({detail}). "
-            f"{a} and {b} can influence each other without constant power struggles."
+        return _pack(
+            base + " Give-and-take looks easy: decisions can move without constant tug-of-war."
         )
     if score >= 1:
-        return (
-            f"Influence is mixed ({detail}). Some days one leads easily; other days "
-            "you may need extra patience around decisions."
+        return _pack(
+            base
+            + " Influence is mixed. Some topics will feel cooperative; others may need extra patience.",
+            problem="Occasional power struggles around money, travel, or family decisions.",
+            solutions=[
+                "Split domains: one leads finances, the other leads home/social — review every 6 months.",
+                "Use a simple rule: no big decision in anger; sleep on it, then decide together.",
+                "Friday Venus-friendly habits (kind speech, shared pleasant routine) help soft influence.",
+            ],
         )
-    return (
-        f"Control dynamics can feel uneven ({detail}). "
-        "Agree who decides what, so small issues do not turn into tug-of-war."
+    return _pack(
+        base + " Control can feel uneven — one may dominate or the other resist by withdrawing.",
+        problem="Chronic “who is the boss?” tension, silent stubbornness, or decisions made unilaterally.",
+        solutions=[
+            "Make a written decision map (house, money, in-laws, career moves) so power is explicit, not accidental.",
+            "Practice “proposal + consent”: one proposes, the other must actively agree — no silent defaults.",
+            "Classical support: Saturday seva or sesame charity for Saturn-style patience; cool Mars with Tuesday calm (no harsh speech).",
+            "If fights escalate fast, use a counsellor or elder mediator for the first year of major choices.",
+        ],
     )
 
 
-def _explain_tara(score: float, detail: str, a: str, b: str) -> str:
+def _tara_copy(score: float, detail: str, a: str, b: str) -> Dict[str, Any]:
+    base = (
+        f"Tara counts birth-star steps from {a} to {b} ({detail}). "
+        "It speaks to luck timing, mutual support, and whether efforts feel blessed or blocked together."
+    )
     if score >= 3:
-        return (
-            f"Birth-star timing is supportive ({detail}). "
-            f"Day-to-day luck and mutual support between {a} and {b} tend to flow better."
+        return _pack(
+            base + " Supportive Tara: joint plans and day-to-day backing tend to land more smoothly."
         )
     if score >= 1.5:
-        return (
-            f"Birth-star link is mixed ({detail}). "
-            "Some phases feel easy, some need more care — not a deal-breaker on its own."
+        return _pack(
+            base + " Mixed Tara: some seasons feel easy, some ask for more care — not a solo deal-breaker.",
+            problem="Uneven luck windows — projects started together may stall in certain months.",
+            solutions=[
+                "Avoid forcing marriage dates, house buys, or business launches on rushed timelines; pick muhurta with a Jyotishi.",
+                "Keep an emergency fund and shared calendar so “bad star weeks” don’t become money fights.",
+                "Monday Moon care (rest, white food, calm night routine) for both partners during stress phases.",
+            ],
         )
-    return (
-        f"Birth-star count is a harder Tara ({detail}). "
-        "Plan big moves together carefully; emotional timing may feel off more often."
+    return _pack(
+        base + " Harder Tara (Vipat / Pratyak / Naidhana class): emotional timing and joint luck can feel off.",
+        problem="Higher chance of mistimed decisions, feeling unsupported, or blame when plans fail.",
+        solutions=[
+            "Do not take major couple risks in haste; double-check health, money, and travel plans together.",
+            "Build a weekly check-in: what felt supportive vs lonely — fix small gaps before they grow.",
+            "Classical support: chant or listen to a short Moon / Durga stotra on Mondays; keep vows simple and kept.",
+            "If marriage is near, ask a Jyotishi for Tara-aware muhurta and whether other strong gunas offset this.",
+        ],
     )
 
 
-def _explain_yoni(score: float, detail: str, a: str, b: str) -> str:
+def _yoni_copy(score: float, detail: str, a: str, b: str) -> Dict[str, Any]:
+    base = (
+        f"Yoni maps instinctive animal affinity from birth stars ({detail}). "
+        f"It relates to private comfort, sexual pace, and how {a} and {b} seek closeness or space."
+    )
     if score >= 4:
-        return (
-            f"Instinct and intimacy style match closely ({detail}). "
-            f"Physical comfort and private chemistry between {a} and {b} usually feel natural."
+        return _pack(
+            base + " Strong match: physical and instinctive comfort usually feels natural."
         )
     if score >= 2:
-        return (
-            f"Intimate style is workable ({detail}). "
-            "Attraction can grow with care; neither is a natural enemy pattern."
+        return _pack(
+            base + " Workable affinity: chemistry can grow with care; not a classical enemy pair.",
+            problem="Desire or affection styles may differ (more touch vs more space).",
+            solutions=[
+                "Talk preferences early without shame — frequency, privacy, affection in public.",
+                "Protect couple time weekly so friendship feeds intimacy.",
+                "Friday shared pleasant routine (meal, walk, soft speech) supports Venus harmony.",
+            ],
         )
-    return (
-        f"Instinct styles clash ({detail}). "
-        "You may need more conscious effort around closeness, space, and sexual comfort."
+    return _pack(
+        base + " Enemy-style yoni: instincts can clash — chase vs withdraw, heat vs coolness.",
+        problem="Frustration around intimacy, jealousy, or feeling “mismatched” in private life.",
+        solutions=[
+            "Treat intimacy as a skill: slow consent, clear asks, no score-keeping insults.",
+            "If hurt repeats, seek a couples therapist — do not only rely on silence or pressure.",
+            "Classical support: Friday Venus mantra / white sweets charity; avoid harsh red-coral self-prescription without guidance.",
+            "Reduce porn/comparison habits that widen the gap; rebuild with shared affection rituals.",
+        ],
     )
 
 
-def _explain_maitri(score: float, detail: str, a: str, b: str) -> str:
+def _maitri_copy(score: float, detail: str, a: str, b: str) -> Dict[str, Any]:
+    base = (
+        f"Graha Maitri checks friendship between Moon-sign lords ({detail}). "
+        f"It shows whether {a} and {b}’s minds naturally cooperate — moods, logic, and problem-solving."
+    )
     if score >= 4:
-        return (
-            f"Mind-sign rulers are friendly ({detail}). "
-            f"{a} and {b} can understand each other’s moods and think as a team."
+        return _pack(
+            base + " Friendly lords: you can usually understand each other’s thinking and repair after stress."
         )
     if score >= 3:
-        return (
-            f"Mental friendship is average ({detail}). "
-            "Communication works if you stay curious and avoid assuming the worst."
+        return _pack(
+            base + " Average mental friendship: workable if you stay curious and avoid mind-reading.",
+            problem="Occasional misunderstanding when both assume the other “should just get it.”",
+            solutions=[
+                "Use “I feel / I need” sentences instead of accusations.",
+                "Repeat back what you heard before answering in a fight.",
+                "Wednesday Mercury habits: journaling, clear texts, no important talks while hungry/tired.",
+            ],
         )
-    return (
-        f"Mind-sign rulers are tense ({detail}). "
-        "Misunderstandings may come faster — slow down arguments and clarify feelings."
+    return _pack(
+        base + " Tense lords: minds may argue by default; small issues escalate into character attacks.",
+        problem="Frequent misunderstandings, sarcasm, or feeling emotionally unread.",
+        solutions=[
+            "Hard rule: no name-calling; take a 20‑minute pause when volume rises.",
+            "Write agreements (chores, money, visiting families) so memory fights drop.",
+            "Classical support: Mercury/Jupiter charity (books, green gram, Thursday learning) to cool speech karma.",
+            "Consider premarital counselling to learn a shared conflict language.",
+        ],
     )
 
 
-def _explain_gana(score: float, detail: str, a: str, b: str) -> str:
+def _gana_copy(score: float, detail: str, a: str, b: str) -> Dict[str, Any]:
+    base = (
+        f"Gana is temperament from birth star — Deva (gentle/ideal), Manushya (practical), "
+        f"Rakshasa (intense/direct) ({detail}). It shows default mood chemistry between {a} and {b}."
+    )
     if score >= 5:
-        return (
-            f"Temperaments fit well ({detail}). "
-            f"Basic nature — calm, practical, or intense — sits comfortably between {a} and {b}."
+        return _pack(
+            base + " Temperaments fit well — daily mood and pace usually feel familiar."
         )
     if score >= 1:
-        return (
-            f"Temperaments are only partly aligned ({detail}). "
-            "One may want peace while the other pushes harder — name the difference early."
+        return _pack(
+            base + " Partial fit: one may want harmony while the other pushes for change or intensity.",
+            problem="Different default speeds — rest vs drive, soft speech vs blunt honesty.",
+            solutions=[
+                "Name your types out loud (“I reset with quiet; you reset with action”) and design weekends accordingly.",
+                "Protect sleep and meal timing — temperament clashes worsen with fatigue.",
+                "Shared seva once a month softens ego and builds team feeling.",
+            ],
         )
-    return (
-        f"Temperaments pull in opposite directions ({detail}). "
-        "Expect different default moods; shared routines and respect matter a lot here."
+    return _pack(
+        base + " Classical Deva–Rakshasa stretch: idealism vs intensity can feel like different planets.",
+        problem="One feels the other is too soft or too harsh; home peace swings with mood.",
+        solutions=[
+            "Create house rules for tone: no contempt, no silent treatment longer than 24 hours.",
+            "Channel intensity into gym, work, or creative goals — not into the partner.",
+            "Classical support: Hanuman Chalisa / Mars-cooling on Tuesdays for harshness; soft Friday speech vows.",
+            "If contempt appears early, pause marriage pressure and do structured counselling first.",
+        ],
     )
 
 
-def _explain_bhakoot(score: float, detail: str, a: str, b: str) -> str:
+def _bhakoot_copy(score: float, detail: str, a: str, b: str) -> Dict[str, Any]:
+    base = (
+        f"Bhakoot studies Moon-sign distance ({detail}). "
+        "Harmonious pairs support love and household mood; 2/12, 5/9, or 6/8 links are classical stress patterns."
+    )
     if score >= 7:
-        return (
-            f"Moon-sign pair is harmonious ({detail}). "
-            f"Emotional weather between {a} and {b} tends to support love and home life."
+        return _pack(
+            base
+            + f" Harmonious for {a} and {b}: emotional weather usually supports bonding and home building."
         )
-    return (
-        f"Moon signs form a classical Bhakoot stress pair ({detail}). "
-        "Family, money mood, or emotional distance can flare — stay honest about needs."
+    return _pack(
+        base
+        + " This pair hits a Bhakoot dosha pattern — mood around family, money, or closeness can oscillate.",
+        problem=(
+            "Higher risk of emotional distance, family interference stress, or money-mood fights "
+            "even when love is real."
+        ),
+        solutions=[
+            "Keep finances transparent (shared sheet); money secrecy worsens Bhakoot stress.",
+            "Limit triangle fights with in-laws — couple decides first, then informs families.",
+            "Daily 10‑minute unplugged talk keeps emotional distance from becoming permanent.",
+            "Classical support: Moon remedies (Monday fast/light diet if health allows, pearl only after consult) and a Jyotishi check for Bhakoot exceptions.",
+            "Strengthen other life pillars (friendship, shared projects) so one bad mood week does not define the marriage.",
+        ],
     )
 
 
-def _explain_nadi(score: float, detail: str, a: str, b: str) -> str:
+def _nadi_copy(score: float, detail: str, a: str, b: str) -> Dict[str, Any]:
+    base = (
+        f"Nadi is the heaviest Ashtakoota factor ({detail}). "
+        "Different Nadis are classically preferred for vitality and progeny themes; same Nadi is a major caution."
+    )
     if score >= 8:
-        return (
-            f"Health–family axis is clear ({detail}). "
-            "Classical texts see different Nadis as better for vitality and children themes."
+        return _pack(
+            base
+            + f" {a} and {b} have different Nadis — classical texts read this as clearer on the health/family axis."
         )
-    return (
-        f"Same Nadi shows here ({detail}). "
-        "Traditional matching treats this as the heaviest caution — discuss health, "
-        "family planning, and get a second opinion from a trusted Jyotishi if needed."
+    return _pack(
+        base
+        + " Same Nadi is present. Traditional matching treats this as the strongest red flag in the 36‑point system.",
+        problem=(
+            "Classical concern for health stress, hereditary load, or challenges around children — "
+            "not a medical diagnosis, but a serious traditional warning."
+        ),
+        solutions=[
+            "Do not ignore this guna: consult a trusted Jyotishi for full D1/D9 review and any classical exceptions (e.g. other strong cancellations).",
+            "Get practical medical/genetic counselling if you are planning children — astrology does not replace doctors.",
+            "Prioritize sleep, shared health habits, and stress reduction as a couple project.",
+            "Classical upaya often cited: Nadi-related charity, temple seva, and mantras under guidance — avoid random gemstone self-prescription.",
+            "If families demand a “yes/no,” ask for a second independent chart reading before deciding.",
+        ],
     )
 
 
-def _verdict_pack(total: float, a: str, b: str) -> Tuple[str, str]:
+_COPY = {
+    "varna": _varna_copy,
+    "vashya": _vashya_copy,
+    "tara": _tara_copy,
+    "yoni": _yoni_copy,
+    "graha_maitri": _maitri_copy,
+    "gana": _gana_copy,
+    "bhakoot": _bhakoot_copy,
+    "nadi": _nadi_copy,
+}
+
+
+def _verdict_pack(total: float, a: str, b: str, weak_n: int) -> Tuple[str, str, List[str]]:
+    overall_solutions: List[str] = [
+        "Read every weak guna below — score alone is not enough; the story is in the details.",
+        "Decide together: marry / wait / seek deeper chart review — do not let relatives rush a low-clarity match.",
+    ]
     if total >= 28:
-        return (
+        verdict, summary = (
             "Excellent match",
-            f"{a} and {b} score in a strong classical range. Most life areas look supportive; "
-            "use the weaker gunas below as gentle homework, not red flags.",
+            f"{a} and {b} score in a strong classical range ({total:.0f}/36). "
+            "Most life areas look supportive. Any weaker gunas are homework, not automatic rejection — "
+            "still honour them so small cracks do not grow after marriage.",
         )
-    if total >= 24:
-        return (
+        overall_solutions = [
+            "Protect the strengths with weekly appreciation and shared rituals.",
+            "Still apply solutions listed under any Okay/Weak guna so pride does not skip maintenance.",
+        ]
+    elif total >= 24:
+        verdict, summary = (
             "Very good match",
-            f"{a} and {b} sit in a solid range. The bond has clear strengths; "
-            "pay attention to any weak gunas so small frictions do not pile up.",
+            f"{a} and {b} sit in a solid range ({total:.0f}/36). "
+            "The bond has clear strengths. Focus effort on the weaker gunas so friction stays small.",
         )
-    if total >= 18:
-        return (
+    elif total >= 18:
+        verdict, summary = (
             "Workable match",
-            f"{a} and {b} land in a middle range — many couples live well here with effort. "
-            "Read the weak points carefully and talk them through before big decisions.",
+            f"{a} and {b} land mid-range ({total:.0f}/36). Many couples thrive here with maturity. "
+            f"There are {weak_n} weak guna(s) — treat those solutions as required conversation, not optional reading.",
         )
-    if total >= 12:
-        return (
+        overall_solutions.extend(
+            [
+                "Do a premarital counselling session focused on the watch-out list.",
+                "Revisit this report together after 30 days of honest talks and see what improved.",
+            ]
+        )
+    elif total >= 12:
+        verdict, summary = (
             "Needs care",
-            f"The score for {a} and {b} is on the lower side. Strengths still exist, "
-            "but several areas ask for patience, counseling, or a deeper chart review.",
+            f"The score for {a} and {b} is on the lower side ({total:.0f}/36). Love can still be real, "
+            f"but {weak_n} weak area(s) ask for patience, practical fixes, and preferably a full Jyotish consult "
+            "before locking dates.",
         )
-    return (
-        "Low compatibility score",
-        f"Classically, {a} and {b} score low on Ashtakoota. This is guidance, not a verdict "
-        "on love — still, take the weak gunas seriously and seek a fuller consult if marriage is near.",
-    )
+        overall_solutions.extend(
+            [
+                "Pause irreversible decisions until weak gunas and Manglik notes are addressed.",
+                "Book an independent Jyotishi (not only family priest) for D9 and dasha context.",
+            ]
+        )
+    else:
+        verdict, summary = (
+            "Low compatibility score",
+            f"Classically, {a} and {b} score low ({total:.0f}/36). This is guidance, not a verdict on your worth. "
+            "Take every weak guna and its solutions seriously; seek a fuller consult if marriage is near.",
+        )
+        overall_solutions.extend(
+            [
+                "Do not force muhurta or family pressure over unresolved Nadi/Bhakoot/Manglik issues.",
+                "If you still choose each other, commit to counselling + health transparency + slow timelines.",
+            ]
+        )
+    return verdict, summary, overall_solutions
 
 
 def _manglik_pack(
@@ -500,20 +672,30 @@ def _manglik_pack(
     detail_b: str,
     a: str,
     b: str,
-) -> Tuple[str, str]:
-    """title, explanation."""
+) -> Tuple[str, str, str | None, List[str]]:
+    """title, explanation, problem|None, solutions."""
     if mang_a and mang_b:
         return (
             "Both show Manglik",
-            f"{a} ({detail_a}) and {b} ({detail_b}) both have Mars in a Manglik house. "
-            "Many traditions treat two Manglik partners as balancing each other. "
-            "Still watch temper and haste in the early years of marriage.",
+            f"{a} ({detail_a}) and {b} ({detail_b}) both have Mars in a Manglik house (1, 4, 7, 8, or 12). "
+            "Many traditions treat two Manglik partners as mutually balancing. "
+            "Energy and courage can be high — so can temper if untrained.",
+            "Possible early-year heat: impatience, sharp speech, or rushed decisions under stress.",
+            [
+                "Promise a “cool-down” rule: no final decisions during anger; walk first.",
+                "Channel Mars into sport, disciplined work, or service — not into winning every argument.",
+                "Classical support often cited: Hanuman Chalisa on Tuesdays, masoor/jaggery charity, "
+                "and red coral only after a qualified Jyotishi checks the full chart.",
+                "Delay impulsive wedding logistics; pick muhurta with Mars dignity in mind.",
+            ],
         )
     if not mang_a and not mang_b:
         return (
             "No Manglik flag",
-            f"Neither {a} nor {b} has Mars in the classic Manglik houses (1, 4, 7, 8, or 12). "
-            "This separate check looks clear alongside the 36-point score.",
+            f"Neither {a} nor {b} has Mars in the classic Manglik houses. "
+            "This separate Mars check looks clear beside the 36‑point guna score.",
+            None,
+            [],
         )
     who = a if mang_a else b
     det = detail_a if mang_a else detail_b
@@ -521,8 +703,16 @@ def _manglik_pack(
     return (
         "Manglik on one side",
         f"{who} shows Manglik ({det}); {other} does not. "
-        "Older matching often asks for extra care, remedies, or delayed marriage timing. "
-        "Treat this as a conversation point, not an automatic no.",
+        "Older matching often asks for extra care because Mars heat on one side can feel unmatched.",
+        "Traditional concern for friction, delay, or temper imbalance in marriage timing — not an automatic ban.",
+        [
+            f"Discuss openly: how {who} handles anger and haste, and how {other} needs safety.",
+            "Ask a Jyotishi whether Venus/Jupiter placements cancel or soften Manglik for this chart.",
+            "Classical upaya often used: Kumbh vivah / symbolic Mars pacification only under guidance; "
+            "Tuesday Hanuman practice; avoid self-prescribing strong Mars gems.",
+            "Prefer a slightly later, calmer wedding timeline if families agree — haste worsens Mars stories.",
+            "Premarital counselling on conflict styles is practical medicine alongside any ritual.",
+        ],
     )
 
 
@@ -536,15 +726,15 @@ def match_charts(person_a: KundliChart, person_b: KundliChart) -> Dict[str, Any]
     a_name = person_a.birth.name
     b_name = person_b.birth.name
 
-    raw: List[Tuple[str, str, float, Tuple[float, str], Any]] = [
-        ("varna", "Varna", 1, _varna(a_rashi, b_rashi), _explain_varna),
-        ("vashya", "Vashya", 2, _vashya(a_rashi, b_rashi), _explain_vashya),
-        ("tara", "Tara", 3, _tara(a_nak, b_nak), _explain_tara),
-        ("yoni", "Yoni", 4, _yoni(a_nak, b_nak), _explain_yoni),
-        ("graha_maitri", "Graha Maitri", 5, _graha_maitri(a_rashi, b_rashi), _explain_maitri),
-        ("gana", "Gana", 6, _gana(a_nak, b_nak), _explain_gana),
-        ("bhakoot", "Bhakoot", 7, _bhakoot(a_ri, b_ri), _explain_bhakoot),
-        ("nadi", "Nadi", 8, _nadi(a_nak, b_nak), _explain_nadi),
+    scored: List[Tuple[str, str, float, Tuple[float, str]]] = [
+        ("varna", "Varna", 1, _varna(a_rashi, b_rashi)),
+        ("vashya", "Vashya", 2, _vashya(a_rashi, b_rashi)),
+        ("tara", "Tara", 3, _tara(a_nak, b_nak)),
+        ("yoni", "Yoni", 4, _yoni(a_nak, b_nak)),
+        ("graha_maitri", "Graha Maitri", 5, _graha_maitri(a_rashi, b_rashi)),
+        ("gana", "Gana", 6, _gana(a_nak, b_nak)),
+        ("bhakoot", "Bhakoot", 7, _bhakoot(a_ri, b_ri)),
+        ("nadi", "Nadi", 8, _nadi(a_nak, b_nak)),
     ]
 
     titles = {
@@ -559,8 +749,9 @@ def match_charts(person_a: KundliChart, person_b: KundliChart) -> Dict[str, Any]
     }
 
     kootas: List[Dict[str, Any]] = []
-    for kid, name, max_pts, (score, detail), explainer in raw:
+    for kid, name, max_pts, (score, detail) in scored:
         level = _level(score, max_pts)
+        copy = _COPY[kid](score, detail, a_name, b_name)
         kootas.append(
             {
                 "id": kid,
@@ -570,39 +761,55 @@ def match_charts(person_a: KundliChart, person_b: KundliChart) -> Dict[str, Any]
                 "score": score,
                 "level": level,
                 "detail": detail,
-                "explanation": explainer(score, detail, a_name, b_name),
+                "explanation": copy["explanation"],
+                "problem": copy.get("problem"),
+                "solutions": copy.get("solutions") or [],
             }
         )
 
     total = sum(float(k["score"]) for k in kootas)
     max_total = 36.0
-    verdict, summary = _verdict_pack(total, a_name, b_name)
-
+    weak = [k for k in kootas if k["level"] == "weak"]
+    ok_issues = [k for k in kootas if k["level"] == "ok" and k.get("problem")]
     strengths = [k for k in kootas if k["level"] == "strong"]
-    watch = [k for k in kootas if k["level"] == "weak"]
+
+    verdict, summary, overall_solutions = _verdict_pack(total, a_name, b_name, len(weak))
 
     mang_a, mang_a_d = _manglik(person_a)
     mang_b, mang_b_d = _manglik(person_b)
-    manglik_title, manglik_note = _manglik_pack(
+    manglik_title, manglik_note, manglik_problem, manglik_solutions = _manglik_pack(
         mang_a, mang_b, mang_a_d, mang_b_d, a_name, b_name
     )
 
-    # Keep old field for any cached clients
-    manglik_note_short = manglik_note
+    action_plan: List[str] = list(overall_solutions)
+    for k in weak + ok_issues:
+        for sol in k["solutions"][:2]:
+            if sol not in action_plan:
+                action_plan.append(sol)
+    for sol in manglik_solutions[:2]:
+        if sol not in action_plan:
+            action_plan.append(sol)
 
     return {
-        "version": "ashtakoota-v2",
+        "version": "ashtakoota-v3",
         "total": total,
         "max": max_total,
         "verdict": verdict,
         "summary": summary,
+        "action_plan": action_plan[:8],
         "strengths": [
             {"name": k["name"], "title": k["title"], "score": k["score"], "max": k["max"]}
             for k in strengths
         ],
         "watchouts": [
-            {"name": k["name"], "title": k["title"], "score": k["score"], "max": k["max"]}
-            for k in watch
+            {
+                "name": k["name"],
+                "title": k["title"],
+                "score": k["score"],
+                "max": k["max"],
+                "problem": k.get("problem"),
+            }
+            for k in weak
         ],
         "kootas": kootas,
         "person_a": {
@@ -622,10 +829,12 @@ def match_charts(person_a: KundliChart, person_b: KundliChart) -> Dict[str, Any]
             "manglik_detail": mang_b_d,
         },
         "manglik_title": manglik_title,
-        "manglik_note": manglik_note_short,
+        "manglik_note": manglik_note,
+        "manglik_problem": manglik_problem,
+        "manglik_solutions": manglik_solutions,
         "convention": (
-            f"Person A ({a_name}) is read as bride-side and Person B ({b_name}) as groom-side "
-            "for classical Varna, Vashya, and Tara rules. Score is educational guidance — "
-            "not a medical, legal, or destiny decree."
+            f"Person A ({a_name}) is bride-side and Person B ({b_name}) is groom-side "
+            "for Varna, Vashya, and Tara. Explanations and remedies are educational Jyotish guidance — "
+            "not medical, legal, financial, or destiny decrees. For health or pregnancy concerns, see a doctor."
         ),
     }

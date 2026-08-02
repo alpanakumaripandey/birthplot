@@ -159,6 +159,8 @@ export type MatchKoota = {
   level?: 'strong' | 'ok' | 'weak'
   detail: string
   explanation?: string
+  problem?: string | null
+  solutions?: string[]
   note?: string
 }
 
@@ -167,6 +169,7 @@ export type MatchHighlight = {
   title: string
   score: number
   max: number
+  problem?: string | null
 }
 
 export type MatchReport = {
@@ -175,6 +178,7 @@ export type MatchReport = {
   max: number
   verdict: string
   summary?: string
+  action_plan?: string[]
   strengths?: MatchHighlight[]
   watchouts?: MatchHighlight[]
   kootas: MatchKoota[]
@@ -182,6 +186,8 @@ export type MatchReport = {
   person_b: MatchPersonSummary
   manglik_title?: string
   manglik_note: string
+  manglik_problem?: string | null
+  manglik_solutions?: string[]
   convention: string
 }
 
