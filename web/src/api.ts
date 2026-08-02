@@ -1,4 +1,4 @@
-import type { AskResponse, ChartRequest, FullReport } from './types'
+import type { AskResponse, ChartRequest, FullReport, MatchReport, MatchRequest } from './types'
 
 /** Empty in local dev (Vite proxies /api). Set VITE_API_URL on Netlify/Cloudflare. */
 const API_BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? ''
@@ -15,6 +15,16 @@ async function parseError(res: Response): Promise<string> {
 
 export async function createChart(body: ChartRequest): Promise<FullReport> {
   const res = await fetch(`${API_BASE}/api/chart`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) throw new Error(await parseError(res))
+  return res.json()
+}
+
+export async function matchCharts(body: MatchRequest): Promise<MatchReport> {
+  const res = await fetch(`${API_BASE}/api/match`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),

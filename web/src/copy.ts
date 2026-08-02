@@ -4,6 +4,7 @@ type Tone = { funky: string; seedha: string; sick: string }
 
 export const COPY = {
   navCast: { funky: 'Cast', seedha: 'Cast', sick: 'Cast' },
+  navMatch: { funky: 'Milan', seedha: 'Match', sick: 'Match' },
   navReport: { funky: 'Report', seedha: 'Report', sick: 'Recap' },
   navLexicon: { funky: 'Lexicon', seedha: 'Lexicon', sick: 'Glossary' },
   navHow: { funky: 'Kaise?', seedha: 'How', sick: 'Explain' },
@@ -460,6 +461,39 @@ export const COPY = {
     funky: 'Is theme pe Ask kholo →',
     seedha: 'Explore this theme in Ask →',
     sick: 'Take this theme to Ask →',
+  },
+
+  matchTitle: {
+    funky: 'Kundali milan — do janam, ek score',
+    seedha: 'Kundali matching',
+    sick: 'Kundali match — two charts, one score',
+  },
+  matchLede: {
+    funky: 'Ashtakoota 36 — Moon pe Moon. A = bride-side, B = groom-side.',
+    seedha: 'Ashtakoota (36 points) from both Moon charts. Person A is bride-side, Person B is groom-side.',
+    sick: 'Ashtakoota out of 36 — Moon vs Moon. A bride-side, B groom-side.',
+  },
+  matchPersonA: { funky: 'Person A (bride-side)', seedha: 'Person A (bride-side)', sick: 'Person A (bride-side)' },
+  matchPersonB: { funky: 'Person B (groom-side)', seedha: 'Person B (groom-side)', sick: 'Person B (groom-side)' },
+  matchSubmit: { funky: 'Milan chalao', seedha: 'Match charts', sick: 'Run the match' },
+  matchLoadDemo: { funky: 'Demo jodi', seedha: 'Load demo pair', sick: 'Load demo pair' },
+  matchReading: {
+    funky: 'Dono kundli milayi ja rahi hai…',
+    seedha: 'Matching both charts…',
+    sick: 'Cross-checking both skies…',
+  },
+  matchScoreLabel: { funky: 'Guna score', seedha: 'Guna score', sick: 'Guna score' },
+  matchManglik: { funky: 'Manglik check', seedha: 'Manglik check', sick: 'Manglik check' },
+  matchAgain: { funky: 'Naya milan', seedha: 'Match again', sick: 'Match again' },
+  matchNeedBoth: {
+    funky: 'Dono sides ke naam, date, place chahiye.',
+    seedha: 'Name, date, and place are required for both people.',
+    sick: 'Need name, date, and place for both people.',
+  },
+  matchMoonLine: {
+    funky: 'Moon',
+    seedha: 'Moon',
+    sick: 'Moon',
   },
 
   settingsTitle: {

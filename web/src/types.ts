@@ -140,3 +140,38 @@ export type AskResponse = {
   answer: string
   help: string | null
 }
+
+export type MatchPersonSummary = {
+  name: string
+  moon_rashi: string
+  moon_nakshatra: string
+  moon_pada: number
+  manglik: boolean
+  manglik_detail: string
+}
+
+export type MatchKoota = {
+  id: string
+  name: string
+  max: number
+  score: number
+  detail: string
+  note: string
+}
+
+export type MatchReport = {
+  version: string
+  total: number
+  max: number
+  verdict: string
+  kootas: MatchKoota[]
+  person_a: MatchPersonSummary
+  person_b: MatchPersonSummary
+  manglik_note: string
+  convention: string
+}
+
+export type MatchRequest = {
+  person_a: ChartRequest
+  person_b: ChartRequest
+}

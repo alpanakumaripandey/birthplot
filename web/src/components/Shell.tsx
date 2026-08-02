@@ -72,6 +72,11 @@ export function Shell() {
             </NavLink>
           </li>
           <li>
+            <NavLink to="/match" onClick={() => setOpen(false)}>
+              {t('navMatch')}
+            </NavLink>
+          </li>
+          <li>
             <NavLink
               to={report ? '/report/you' : '/report'}
               onClick={() => setOpen(false)}

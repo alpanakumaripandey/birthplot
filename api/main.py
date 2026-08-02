@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field
 from kundli.chart import BirthInput, build_chart
 from kundli.dasha import compute_vimshottari
 from kundli.knowledge_loader import houses, nakshatras, planets, rashis, topics
+from kundli.matching import match_charts
 from kundli.qa import answer_question, list_topics_help
 from api.serialize import build_full_report
 
@@ -67,6 +68,11 @@ class AskRequest(BaseModel):
     place: str
     time_unknown: bool = False
     question: str = Field(..., min_length=1)
+
+
+class MatchRequest(BaseModel):
+    person_a: ChartRequest
+    person_b: ChartRequest
 
 
 def _parse_birth(req: ChartRequest | AskRequest) -> BirthInput:
@@ -133,6 +139,19 @@ def ask(body: AskRequest) -> Dict[str, Any]:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:  # noqa: BLE001
         raise HTTPException(status_code=500, detail=f"Ask failed: {exc}") from exc
+
+
+@app.post("/api/match")
+def match(body: MatchRequest) -> Dict[str, Any]:
+    """Ashtakoota guna milan for two birth charts (marriage)."""
+    try:
+        chart_a = build_chart(_parse_birth(body.person_a))
+        chart_b = build_chart(_parse_birth(body.person_b))
+        return match_charts(chart_a, chart_b)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(status_code=500, detail=f"Match failed: {exc}") from exc
 
 
 LexiconKind = Literal["rashis", "planets", "nakshatras", "houses", "topics"]

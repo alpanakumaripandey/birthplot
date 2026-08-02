@@ -6,6 +6,7 @@ import { Cast } from './pages/Cast'
 import { Home } from './pages/Home'
 import { How } from './pages/How'
 import { Lexicon } from './pages/Lexicon'
+import { Match } from './pages/Match'
 import { ReportAsk } from './pages/ReportAsk'
 import { ReportGrahas } from './pages/ReportGrahas'
 import { ReportHouses } from './pages/ReportHouses'
@@ -25,6 +26,7 @@ export default function App() {
             <Route element={<Shell />}>
               <Route index element={<Home />} />
               <Route path="cast" element={<Cast />} />
+              <Route path="match" element={<Match />} />
               <Route path="report" element={<ReportIndex />} />
               <Route path="report/you" element={<ReportYou />} />
               <Route path="report/summary" element={<ReportSummary />} />
