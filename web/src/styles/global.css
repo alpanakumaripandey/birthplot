@@ -2777,9 +2777,17 @@ select {
 
 .match-verdict {
   margin: 0.35rem 0 0;
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--brass);
+}
+
+.match-summary {
+  margin: 0.75rem 0 0;
+  max-width: 40rem;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--ink);
 }
 
 .match-pair-moons {
@@ -2795,27 +2803,95 @@ select {
   line-height: 1.45;
 }
 
+.match-highlights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin: 0 0 var(--space-4);
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.match-highlights h2 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  margin: 0 0 0.45rem;
+  color: var(--brass);
+}
+
+.match-highlights ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.match-breakdown-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  margin: 0 0 0.85rem;
+  color: var(--jade);
+}
+
 .match-koota-list {
   list-style: none;
   margin: 0 0 var(--space-4);
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.15rem;
 }
 
 .match-koota-head {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   gap: 1rem;
   font-size: 0.95rem;
+}
+
+.match-koota-classic {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.match-koota-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  font-size: 0.9rem;
+}
+
+.match-level {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.match-level--strong {
+  color: var(--jade);
+}
+
+.match-level--ok {
+  color: var(--brass);
+}
+
+.match-level--weak {
+  color: var(--danger);
 }
 
 .match-koota-bar {
   height: 0.35rem;
   background: var(--surface);
   border: 1px solid var(--line);
-  margin: 0.4rem 0 0.35rem;
+  margin: 0.45rem 0 0.4rem;
   overflow: hidden;
 }
 
@@ -2825,11 +2901,19 @@ select {
   background: var(--jade);
 }
 
+.match-koota--weak .match-koota-bar > span {
+  background: var(--danger);
+}
+
+.match-koota--ok .match-koota-bar > span {
+  background: var(--brass);
+}
+
 .match-koota-detail {
   margin: 0;
-  font-size: 0.88rem;
-  line-height: 1.45;
-  color: var(--ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--ink);
 }
 
 .match-manglik {
@@ -2848,13 +2932,14 @@ select {
 .match-manglik p,
 .match-convention {
   margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: var(--ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--ink);
 }
 
 .match-convention {
   margin: 0 0 var(--space-4);
+  color: var(--ink-soft);
 }
 
 @media (max-width: 780px) {
@@ -2863,6 +2948,10 @@ select {
   }
 
   .match-duo {
+    grid-template-columns: 1fr;
+  }
+
+  .match-highlights {
     grid-template-columns: 1fr;
   }
 }

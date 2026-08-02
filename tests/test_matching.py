@@ -47,7 +47,7 @@ def test_ashtakoota_mira_kabir():
         place=JAIPUR,
     )
     result = match_charts(a, b)
-    assert result["version"] == "ashtakoota-v1"
+    assert result["version"] == "ashtakoota-v2"
     assert result["max"] == 36
     assert 0 <= result["total"] <= 36
     assert len(result["kootas"]) == 8
@@ -55,3 +55,7 @@ def test_ashtakoota_mira_kabir():
     assert result["person_a"]["name"] == "Mira"
     assert result["person_b"]["name"] == "Kabir"
     assert "moon_nakshatra" in result["person_a"]
+    assert result["summary"]
+    assert result["kootas"][0]["explanation"]
+    assert result["kootas"][0]["title"]
+    assert result["manglik_title"]

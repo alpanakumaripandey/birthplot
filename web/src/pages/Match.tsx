@@ -4,7 +4,7 @@ import { OrbitLoader } from '../components/OrbitLoader'
 import { useLingo } from '../hooks/useLingo'
 import { useReveal } from '../hooks/useReveal'
 import { useSound } from '../hooks/useSound'
-import type { ChartRequest, MatchReport } from '../types'
+import type { ChartRequest, MatchKoota, MatchReport } from '../types'
 
 type PersonForm = {
   name: string
@@ -55,6 +55,19 @@ function personOk(p: PersonForm): boolean {
     p.place.trim().length > 0 &&
     (p.time_unknown || Boolean(p.time))
   )
+}
+
+function fmtScore(n: number): string {
+  return n % 1 === 0 ? String(n) : n.toFixed(1)
+}
+
+function levelLabel(
+  level: MatchKoota['level'],
+  t: (key: 'matchLevelStrong' | 'matchLevelOk' | 'matchLevelWeak') => string,
+): string {
+  if (level === 'strong') return t('matchLevelStrong')
+  if (level === 'weak') return t('matchLevelWeak')
+  return t('matchLevelOk')
 }
 
 function PersonFields({
@@ -108,7 +121,11 @@ function PersonFields({
             type="checkbox"
             checked={value.time_unknown}
             onChange={(e) =>
-              onChange({ ...value, time_unknown: e.target.checked, time: e.target.checked ? '' : value.time })
+              onChange({
+                ...value,
+                time_unknown: e.target.checked,
+                time: e.target.checked ? '' : value.time,
+              })
             }
           />
           {t('castTimeMystery')}
@@ -134,8 +151,7 @@ function MoonLine({ person }: { person: MatchReport['person_a'] }) {
   return (
     <p className="match-moon">
       <strong>{person.name}</strong> — {t('matchMoonLine')} {person.moon_rashi} /{' '}
-      {person.moon_nakshatra} p{person.moon_pada}
-      {person.manglik ? ` · Manglik (${person.manglik_detail})` : ''}
+      {person.moon_nakshatra} (pada {person.moon_pada})
     </p>
   )
 }
@@ -194,7 +210,7 @@ export function Match() {
   return (
     <section ref={revealRef} className="section wrap page-enter match-page">
       <h1 className="section-title">{t('matchTitle')}</h1>
-      <p className="lede">{t('matchLede')}</p>
+      {!result && <p className="lede">{t('matchLede')}</p>}
 
       {error && <div className="error-banner">{error}</div>}
 
@@ -218,10 +234,11 @@ export function Match() {
           <div className="match-score-hero">
             <p className="match-score-label">{t('matchScoreLabel')}</p>
             <p className="match-score-num">
-              {result.total % 1 === 0 ? result.total : result.total.toFixed(1)}
+              {fmtScore(result.total)}
               <span> / {result.max}</span>
             </p>
             <p className="match-verdict">{result.verdict}</p>
+            {result.summary ? <p className="match-summary">{result.summary}</p> : null}
           </div>
 
           <div className="match-pair-moons">
@@ -229,30 +246,65 @@ export function Match() {
             <MoonLine person={result.person_b} />
           </div>
 
+          {(result.strengths?.length || result.watchouts?.length) ? (
+            <div className="match-highlights">
+              {result.strengths && result.strengths.length > 0 ? (
+                <div>
+                  <h2>{t('matchStrengths')}</h2>
+                  <ul>
+                    {result.strengths.map((s) => (
+                      <li key={s.name}>
+                        <strong>{s.title}</strong> ({s.name}) — {fmtScore(s.score)}/{s.max}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              {result.watchouts && result.watchouts.length > 0 ? (
+                <div>
+                  <h2>{t('matchWatchouts')}</h2>
+                  <ul>
+                    {result.watchouts.map((s) => (
+                      <li key={s.name}>
+                        <strong>{s.title}</strong> ({s.name}) — {fmtScore(s.score)}/{s.max}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          <h2 className="match-breakdown-title">{t('matchBreakdown')}</h2>
           <ul className="match-koota-list">
             {result.kootas.map((k) => (
-              <li key={k.id}>
+              <li key={k.id} className={`match-koota match-koota--${k.level ?? 'ok'}`}>
                 <div className="match-koota-head">
-                  <strong>{k.name}</strong>
-                  <span>
-                    {k.score % 1 === 0 ? k.score : k.score.toFixed(1)} / {k.max}
-                  </span>
+                  <div>
+                    <strong>{k.title ?? k.name}</strong>
+                    <span className="match-koota-classic">{k.name}</span>
+                  </div>
+                  <div className="match-koota-meta">
+                    <span className={`match-level match-level--${k.level ?? 'ok'}`}>
+                      {levelLabel(k.level, t)}
+                    </span>
+                    <span>
+                      {fmtScore(k.score)} / {k.max}
+                    </span>
+                  </div>
                 </div>
-                <div
-                  className="match-koota-bar"
-                  aria-hidden
-                >
+                <div className="match-koota-bar" aria-hidden>
                   <span style={{ width: `${Math.min(100, (k.score / k.max) * 100)}%` }} />
                 </div>
                 <p className="match-koota-detail">
-                  {k.detail}. {k.note}
+                  {k.explanation ?? k.note ?? k.detail}
                 </p>
               </li>
             ))}
           </ul>
 
           <div className="match-manglik">
-            <h2>{t('matchManglik')}</h2>
+            <h2>{result.manglik_title ?? t('matchManglik')}</h2>
             <p>{result.manglik_note}</p>
           </div>
 

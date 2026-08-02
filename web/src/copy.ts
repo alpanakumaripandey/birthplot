@@ -469,9 +469,12 @@ export const COPY = {
     sick: 'Kundali match — two charts, one score',
   },
   matchLede: {
-    funky: 'Ashtakoota 36 — Moon pe Moon. A = bride-side, B = groom-side.',
-    seedha: 'Ashtakoota (36 points) from both Moon charts. Person A is bride-side, Person B is groom-side.',
-    sick: 'Ashtakoota out of 36 — Moon vs Moon. A bride-side, B groom-side.',
+    funky:
+      'Do logon ke Moon charts → 36 guna. Score ke saath plain English: kya strong hai, kahan sochna hai.',
+    seedha:
+      'Compare two birth charts with Ashtakoota (36 points). The result explains each guna in plain language.',
+    sick:
+      'Two Moons, 36 gunas — then we translate the score so anyone gets what’s strong and what needs talk.',
   },
   matchPersonA: { funky: 'Person A (bride-side)', seedha: 'Person A (bride-side)', sick: 'Person A (bride-side)' },
   matchPersonB: { funky: 'Person B (groom-side)', seedha: 'Person B (groom-side)', sick: 'Person B (groom-side)' },
@@ -483,17 +486,23 @@ export const COPY = {
     sick: 'Cross-checking both skies…',
   },
   matchScoreLabel: { funky: 'Guna score', seedha: 'Guna score', sick: 'Guna score' },
+  matchBreakdown: {
+    funky: 'Har guna — seedhi baat',
+    seedha: 'Each guna, explained',
+    sick: 'Guna by guna — plain talk',
+  },
+  matchStrengths: { funky: 'Strong areas', seedha: 'Strengths', sick: 'What’s strong' },
+  matchWatchouts: { funky: 'Dhyan dena', seedha: 'Watch-outs', sick: 'Talk these through' },
   matchManglik: { funky: 'Manglik check', seedha: 'Manglik check', sick: 'Manglik check' },
+  matchMoonLine: { funky: 'Moon', seedha: 'Moon', sick: 'Moon' },
+  matchLevelStrong: { funky: 'Strong', seedha: 'Strong', sick: 'Strong' },
+  matchLevelOk: { funky: 'Okay', seedha: 'Okay', sick: 'Okay' },
+  matchLevelWeak: { funky: 'Weak', seedha: 'Weak', sick: 'Weak' },
   matchAgain: { funky: 'Naya milan', seedha: 'Match again', sick: 'Match again' },
   matchNeedBoth: {
     funky: 'Dono sides ke naam, date, place chahiye.',
     seedha: 'Name, date, and place are required for both people.',
     sick: 'Need name, date, and place for both people.',
-  },
-  matchMoonLine: {
-    funky: 'Moon',
-    seedha: 'Moon',
-    sick: 'Moon',
   },
 
   settingsTitle: {

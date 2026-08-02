@@ -153,10 +153,20 @@ export type MatchPersonSummary = {
 export type MatchKoota = {
   id: string
   name: string
+  title?: string
   max: number
   score: number
+  level?: 'strong' | 'ok' | 'weak'
   detail: string
-  note: string
+  explanation?: string
+  note?: string
+}
+
+export type MatchHighlight = {
+  name: string
+  title: string
+  score: number
+  max: number
 }
 
 export type MatchReport = {
@@ -164,9 +174,13 @@ export type MatchReport = {
   total: number
   max: number
   verdict: string
+  summary?: string
+  strengths?: MatchHighlight[]
+  watchouts?: MatchHighlight[]
   kootas: MatchKoota[]
   person_a: MatchPersonSummary
   person_b: MatchPersonSummary
+  manglik_title?: string
   manglik_note: string
   convention: string
 }
