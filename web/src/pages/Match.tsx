@@ -241,10 +241,11 @@ export function Match() {
           </div>
 
           {result.overview && result.overview.length > 0 ? (
-            <div className="match-overview">
+            <div className="match-overview" id="match-full-summary">
               <h2>{t('matchOverview')}</h2>
-              {result.overview.map((para) => (
-                <p key={para.slice(0, 48)}>{para}</p>
+              <p className="match-overview-hint">{t('matchOverviewHint')}</p>
+              {result.overview.map((para, i) => (
+                <p key={`ov-${i}`}>{para}</p>
               ))}
             </div>
           ) : result.summary ? (

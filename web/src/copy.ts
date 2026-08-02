@@ -503,6 +503,11 @@ export const COPY = {
     seedha: 'Full summary in simple words',
     sick: 'The whole picture — plain English',
   },
+  matchOverviewHint: {
+    funky: 'Pehle ye padho — score ke peeche poori kahani.',
+    seedha: 'Read this first — what the whole match means in everyday language.',
+    sick: 'Read this first — the whole match in plain talk.',
+  },
   matchGunaGuide: {
     funky: 'Har guna kya poochhta hai',
     seedha: 'What each guna asks',
