@@ -2,7 +2,7 @@
 [build]
   base = "web"
   command = "npm run build"
-  publish = "web/dist"
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20"
