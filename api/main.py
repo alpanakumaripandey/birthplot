@@ -15,6 +15,7 @@ from kundli.dasha import compute_vimshottari
 from kundli.knowledge_loader import houses, nakshatras, planets, rashis, topics
 from kundli.matching import match_charts
 from kundli.qa import answer_question, list_topics_help
+from kundli.simple_summary import match_simple_summary
 from api.serialize import build_full_report
 
 _LOCAL_ORIGINS = [
@@ -147,7 +148,11 @@ def match(body: MatchRequest) -> Dict[str, Any]:
     try:
         chart_a = build_chart(_parse_birth(body.person_a))
         chart_b = build_chart(_parse_birth(body.person_b))
-        return match_charts(chart_a, chart_b)
+        result = match_charts(chart_a, chart_b)
+        simple, source = match_simple_summary(result)
+        result["simple_summary"] = simple
+        result["simple_summary_source"] = source
+        return result
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:  # noqa: BLE001

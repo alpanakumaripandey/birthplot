@@ -185,6 +185,8 @@ export type MatchReport = {
   max: number
   verdict: string
   summary?: string
+  simple_summary?: string
+  simple_summary_source?: 'llm' | 'rules'
   overview?: string[]
   guna_guide?: MatchGunaGuide[]
   action_plan?: string[]

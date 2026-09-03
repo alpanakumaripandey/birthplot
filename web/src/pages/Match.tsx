@@ -240,6 +240,18 @@ export function Match() {
             <p className="match-verdict">{result.verdict}</p>
           </div>
 
+          {result.simple_summary ? (
+            <div className="match-simple-summary">
+              <div className="match-simple-head">
+                <h2>{t('matchSimpleSummary')}</h2>
+                {result.simple_summary_source === 'llm' ? (
+                  <span className="match-simple-badge">{t('matchSimpleLlm')}</span>
+                ) : null}
+              </div>
+              <p>{result.simple_summary}</p>
+            </div>
+          ) : null}
+
           {result.overview && result.overview.length > 0 ? (
             <div className="match-overview" id="match-full-summary">
               <h2>{t('matchOverview')}</h2>

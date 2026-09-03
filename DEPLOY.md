@@ -57,3 +57,14 @@ cd web && npm run dev
 | UI calls localhost / wrong host | Set `VITE_API_URL` and **rebuild** the frontend (Vite inlines it at build time) |
 | Deep links 404 | Confirm `_redirects` / Netlify `[[redirects]]` SPA rule |
 | API 502 / slow first hit | Free sleep + cold start; wait and retry `/api/health` |
+| Match “AI summary” not showing | Set `OPENAI_API_KEY` or `LLM_API_KEY` on Render; optional `LLM_BASE_URL` + `LLM_MODEL` for Groq/OpenRouter. Without a key, rule-based summary still works |
+
+## Optional: AI simple summary (Match)
+
+On Render, add env vars:
+
+- **`OPENAI_API_KEY`** or **`LLM_API_KEY`** — enables LLM-polished Match summary
+- **`LLM_BASE_URL`** (optional) — e.g. `https://api.groq.com/openai/v1`
+- **`LLM_MODEL`** (optional) — e.g. `llama-3.1-8b-instant` or `gpt-4o-mini`
+
+Without a key, Match still returns a **rule-based simple summary** at the top.

@@ -508,6 +508,16 @@ export const COPY = {
     seedha: 'Read this first — what the whole match means in everyday language.',
     sick: 'Read this first — the whole match in plain talk.',
   },
+  matchSimpleSummary: {
+    funky: 'Seedha summary',
+    seedha: 'Simple summary',
+    sick: 'TL;DR',
+  },
+  matchSimpleLlm: {
+    funky: 'AI polish',
+    seedha: 'AI summary',
+    sick: 'AI wrote this',
+  },
   matchGunaGuide: {
     funky: 'Har guna kya poochhta hai',
     seedha: 'What each guna asks',

@@ -7,6 +7,7 @@ from datetime import date, time
 from kundli.chart import BirthInput, build_chart
 from kundli.geocode import GeoPlace
 from kundli.matching import match_charts
+from kundli.simple_summary import match_simple_summary
 
 PUNE = GeoPlace(
     query="Pune",
@@ -47,6 +48,9 @@ def test_ashtakoota_mira_kabir():
         place=JAIPUR,
     )
     result = match_charts(a, b)
+    simple, source = match_simple_summary(result)
+    result["simple_summary"] = simple
+    result["simple_summary_source"] = source
     assert result["version"] == "ashtakoota-v4"
     assert result["max"] == 36
     assert 0 <= result["total"] <= 36
@@ -63,6 +67,9 @@ def test_ashtakoota_mira_kabir():
     assert result["kootas"][0]["simple"]
     assert result["kootas"][0]["title"]
     assert result["manglik_title"]
+    assert "simple_summary" in result
+    assert result["simple_summary_source"] in ("llm", "rules")
+    assert len(result["simple_summary"]) > 50
     weak = [k for k in result["kootas"] if k["level"] == "weak"]
     for k in weak:
         assert k.get("problem")
