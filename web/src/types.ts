@@ -82,6 +82,8 @@ export type LifeSummaryItem = {
   id: string
   title?: string
   kicker?: string
+  simple_summary?: string
+  simple_summary_source?: 'llm' | 'rules'
   insights?: string[]
   timing?: LifeSummaryTiming[]
   ask_topic: string

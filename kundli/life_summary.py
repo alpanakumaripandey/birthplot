@@ -7,8 +7,9 @@ from typing import List, Sequence, Set, Tuple
 
 from kundli.chart import HouseInfo, KundliChart
 from kundli.dasha import DashaPeriod, DashaTimeline, _antardashas
+from kundli.simple_summary import life_predictive_summary
 
-CONTENT_VERSION = "jyotish-v3"
+CONTENT_VERSION = "life-llm-v1"
 
 SIGN_LORD = {
     "Aries": "Mars",
@@ -291,12 +292,22 @@ def build_life_summary(chart: KundliChart, timeline: DashaTimeline) -> List[dict
         else "Past · Present · Future"
     )
 
+    headline, insights, source = life_predictive_summary(
+        chart=chart,
+        timeline=timeline,
+        draft_past=past,
+        draft_present=present,
+        draft_future=future,
+    )
+
     return [
         {
             "id": "life",
             "title": "Life summary",
-            "kicker": kicker,
-            "insights": [past, present, future],
+            "kicker": headline or kicker,
+            "simple_summary": headline,
+            "simple_summary_source": source,
+            "insights": insights,
             "timing": timing[:4],
             "ask_topic": "career",
             "version": CONTENT_VERSION,

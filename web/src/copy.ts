@@ -428,9 +428,19 @@ export const COPY = {
     sick: 'Past · Present · Future',
   },
   summaryLede: {
-    funky: 'Chart foundation, current dasha, upcoming windows.',
-    seedha: 'Chart foundation, current dasha, upcoming windows.',
-    sick: 'Chart foundation, current dasha, upcoming windows.',
+    funky: 'Poori kundli ka seedha prediction — bina jargon.',
+    seedha: 'A plain-language life reading from your full chart — past, present, future.',
+    sick: 'Full-chart life read in plain talk — past, present, future. No jargon.',
+  },
+  summarySimpleTitle: {
+    funky: 'Seedha headline',
+    seedha: 'Life headline',
+    sick: 'The headline',
+  },
+  summaryAiBadge: {
+    funky: 'AI polish',
+    seedha: 'AI reading',
+    sick: 'AI wrote this',
   },
   summaryNote: {
     funky: '',
@@ -438,9 +448,9 @@ export const COPY = {
     sick: '',
   },
   summaryEmpty: {
-    funky: 'Chart dubara cast karo for this summary.',
-    seedha: 'Re-cast your chart to load this summary.',
-    sick: 'Re-cast to load this summary.',
+    funky: 'Naya life reading ke liye chart dubara cast karo.',
+    seedha: 'Re-cast your chart to load the new life reading.',
+    sick: 'Re-cast to unlock the new life reading.',
   },
   summaryRemedyFocus: {
     funky: '',

@@ -2819,6 +2819,10 @@ select {
   background: var(--surface-strong);
 }
 
+.summary-hero-summary {
+  margin-top: var(--space-3);
+}
+
 .match-simple-head {
   display: flex;
   align-items: center;
