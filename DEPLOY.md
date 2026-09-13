@@ -67,7 +67,8 @@ On Render, add env vars:
 
 - **`LLM_API_KEY`** — Token Harbor Universal Key (`thk_live_…`) or any OpenAI-compatible key
 - **`LLM_BASE_URL`** — `https://tokenharbor.ai/v1` (Token Harbor) or another OpenAI-compatible base
-- **`LLM_MODEL`** — e.g. `th-orchestra` (Token Harbor) or `gpt-4o-mini`
+- **`LLM_MODEL`** — e.g. `deepseek-v4-flash:free` (works at $0 balance) or a paid model if topped up
+
 
 Without a key, Match still returns a **rule-based simple summary** at the top.
 

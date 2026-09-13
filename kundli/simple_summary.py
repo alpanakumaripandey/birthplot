@@ -6,11 +6,13 @@ import json
 import os
 import urllib.error
 import urllib.request
+import re
 from typing import Any, Dict, List, Tuple
 
 # OpenAI-compatible chat API (Token Harbor, OpenAI, Groq, OpenRouter, …)
 _DEFAULT_BASE = "https://tokenharbor.ai/v1"
-_DEFAULT_MODEL = "th-orchestra"
+# Free-tier default — paid models need Token Harbor balance
+_DEFAULT_MODEL = "deepseek-v4-flash:free"
 
 
 def _api_config() -> Tuple[str | None, str, str]:
@@ -112,12 +114,28 @@ def _call_llm(system: str, user: str, *, max_tokens: int = 220) -> str | None:
         method="POST",
     )
     try:
-        with urllib.request.urlopen(req, timeout=45) as resp:
+        with urllib.request.urlopen(req, timeout=60) as resp:
             data = json.loads(resp.read().decode("utf-8"))
         text = (data.get("choices") or [{}])[0].get("message", {}).get("content", "")
         text = (text or "").strip()
         return text or None
-    except (urllib.error.URLError, urllib.error.HTTPError, json.JSONDecodeError, KeyError, IndexError, TimeoutError):
+    except urllib.error.HTTPError as exc:
+        # Paid model with $0 balance — retry once on a free model
+        body = ""
+        try:
+            body = exc.read().decode("utf-8", errors="replace")
+        except Exception:  # noqa: BLE001
+            body = ""
+        if exc.code == 402 and ":free" not in model:
+            free = os.environ.get("LLM_FREE_MODEL", "deepseek-v4-flash:free").strip()
+            if free and free != model:
+                os.environ["LLM_MODEL"] = free
+                return _call_llm(system, user, max_tokens=max_tokens)
+        # Log hint for operators (no secrets)
+        if os.environ.get("LLM_DEBUG"):
+            print(f"LLM HTTP {exc.code}: {body[:200]}", flush=True)
+        return None
+    except (urllib.error.URLError, json.JSONDecodeError, KeyError, IndexError, TimeoutError):
         return None
 
 
@@ -346,21 +364,27 @@ def _rules_life_narrative(
     draft_present: str,
     draft_future: str,
 ) -> Tuple[str, str]:
-    """One flowing plain narrative without LLM."""
+    """One flowing plain narrative without LLM — no technical draft dump."""
     name = chart.birth.name
     rising = chart.lagna.rashi_name
     moon = chart.planets["Moon"].info.rashi_name
-    headline = f"{name} — how life is going, and what’s ahead"
-    past = _soft_jargon(draft_past)
     present = _soft_jargon(draft_present)
     future = _soft_jargon(draft_future)
+    _ = draft_past  # pattern notes reserved for LLM path
+
+    present = re.sub(r"\b\d+(st|nd|rd|th)\b", "", present)
+    present = re.sub(r"\s{2,}", " ", present).strip(" .")
+    future = re.sub(r"\b\d+(st|nd|rd|th)\b", "", future)
+    future = re.sub(r"\s{2,}", " ", future).strip(" .")
+
+    headline = f"{name} — how life is going, and what’s ahead"
     body = (
-        f"{name}, your natural style leans {rising}, and emotionally you move with a {moon} feel. "
-        f"That shapes how work, money, love, and home tend to play out for you. {past}\n\n"
-        f"Right now: {present} This is the chapter you’re living — notice what’s active in career "
-        f"and relationships, and keep your health habits steady.\n\n"
-        f"Looking ahead: {future} The next stretch can open clearer doors if you stay consistent. "
-        f"Use the timing as a guide, not a cage — your choices still write the story."
+        f"{name}, you move through life with a {rising} style and a {moon} emotional rhythm. "
+        f"Work, money, love, and home each carry that stamp — you do best when relationships feel fair "
+        f"and you have room to think for yourself.\n\n"
+        f"Right now: {present}. This is your active chapter. Career and connection may both ask for attention; "
+        f"keep rest and routine steady so stress does not steal the plot.\n\n"
+        f"Looking ahead: {future}. Stay consistent — timing opens doors, but your daily choices walk through them."
     )
     return headline, body
 

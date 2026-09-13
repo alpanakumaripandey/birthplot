@@ -22,4 +22,4 @@ services:
       - key: LLM_BASE_URL
         value: https://tokenharbor.ai/v1
       - key: LLM_MODEL
-        value: th-orchestra
+        value: deepseek-v4-flash:free
