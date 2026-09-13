@@ -1,29 +1,61 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { createChart } from '../api'
 import { ReportGate } from '../components/ReportGate'
+import { OrbitLoader } from '../components/OrbitLoader'
 import { useChart } from '../ChartContext'
 import { useLingo } from '../hooks/useLingo'
 import { useReveal } from '../hooks/useReveal'
 import type { LifeSummaryItem } from '../types'
 
 const LABELS = ['Past', 'Present', 'Future'] as const
-const PREFERRED = ['life-llm-v1', 'jyotish-v3']
+const CURRENT = 'life-llm-v1'
 
 function pickReading(items: LifeSummaryItem[] | undefined): LifeSummaryItem | undefined {
   const list = items ?? []
-  for (const ver of PREFERRED) {
-    const hit = list.find(
-      (p) => p.version === ver && Array.isArray(p.insights) && p.insights.length > 0,
-    )
-    if (hit) return hit
-  }
+  const preferred = list.find(
+    (p) => p.version === CURRENT && Array.isArray(p.insights) && p.insights.length > 0,
+  )
+  if (preferred) return preferred
   return list.find((p) => Array.isArray(p.insights) && p.insights.length > 0)
 }
 
 export function ReportSummary() {
-  const { report } = useChart()
+  const { report, setReport, birthRequest } = useChart()
   const { t } = useLingo()
   const revealRef = useReveal<HTMLDivElement>()
   const reading = pickReading(report?.interpretation.life_summary)
+  const needsFresh = !reading || reading.version !== CURRENT
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const tried = useRef(false)
+
+  useEffect(() => {
+    if (!birthRequest || !needsFresh || tried.current) return
+    tried.current = true
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+    void createChart(birthRequest)
+      .then((fresh) => {
+        if (cancelled) return
+        setReport(fresh)
+      })
+      .catch((err) => {
+        if (cancelled) return
+        setError(err instanceof Error ? err.message : 'Could not load summary')
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [birthRequest, needsFresh, setReport])
+
+  const freshReading = pickReading(report?.interpretation.life_summary)
+  const showReading =
+    freshReading && freshReading.version === CURRENT ? freshReading : undefined
 
   return (
     <ReportGate>
@@ -34,31 +66,59 @@ export function ReportSummary() {
             <p className="lede">{t('summaryLede')}</p>
           </header>
 
-          {!reading ? (
+          {error && <div className="error-banner">{error}</div>}
+
+          {loading || (needsFresh && !showReading && !error) ? (
+            <div className="cast-loading" style={{ padding: '2rem 0' }}>
+              <OrbitLoader />
+              <p className="lede" style={{ marginBottom: 0 }}>
+                {t('summaryLoading')}
+              </p>
+            </div>
+          ) : !showReading ? (
             <div className="empty-panel">
               <p>{t('summaryEmpty')}</p>
-              <Link className="btn" to="/cast">
-                {t('castCta')}
-              </Link>
+              <button
+                type="button"
+                className="btn"
+                onClick={() => {
+                  tried.current = false
+                  setError(null)
+                  if (birthRequest) {
+                    tried.current = true
+                    setLoading(true)
+                    void createChart(birthRequest)
+                      .then(setReport)
+                      .catch((err) =>
+                        setError(err instanceof Error ? err.message : 'Could not load summary'),
+                      )
+                      .finally(() => setLoading(false))
+                  }
+                }}
+              >
+                {t('summaryRetry')}
+              </button>
+              <p style={{ marginTop: '1rem' }}>
+                <Link to="/cast">{t('castCta')}</Link>
+              </p>
             </div>
           ) : (
             <article className="summary-consult">
-              {reading.kicker || reading.simple_summary ? (
+              {showReading.kicker || showReading.simple_summary ? (
                 <div className="match-simple-summary summary-hero-summary">
                   <div className="match-simple-head">
                     <h2>{t('summarySimpleTitle')}</h2>
-                    {reading.simple_summary_source === 'llm' ||
-                    reading.version === 'life-llm-v1' ? (
+                    {showReading.simple_summary_source === 'llm' ? (
                       <span className="match-simple-badge">{t('summaryAiBadge')}</span>
                     ) : null}
                   </div>
-                  <p>{reading.simple_summary || reading.kicker}</p>
+                  <p>{showReading.simple_summary || showReading.kicker}</p>
                 </div>
               ) : null}
 
-              {reading.timing?.length ? (
+              {showReading.timing?.length ? (
                 <div className="summary-timing-row" aria-label="Timing">
-                  {reading.timing.map((titem) => (
+                  {showReading.timing.map((titem) => (
                     <span key={`${titem.label}-${titem.range}`} className="summary-chip">
                       <strong>{titem.label}</strong>
                       <span>{titem.range}</span>
@@ -68,7 +128,7 @@ export function ReportSummary() {
               ) : null}
 
               <div className="summary-insights">
-                {(reading.insights ?? []).map((para, i) => (
+                {(showReading.insights ?? []).map((para, i) => (
                   <div key={LABELS[i] ?? String(i)} className="summary-block">
                     <h2>{LABELS[i] ?? ''}</h2>
                     <p className="summary-para">{para}</p>

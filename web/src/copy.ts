@@ -448,9 +448,19 @@ export const COPY = {
     sick: '',
   },
   summaryEmpty: {
-    funky: 'Naya life reading ke liye chart dubara cast karo.',
-    seedha: 'Re-cast your chart to load the new life reading.',
-    sick: 'Re-cast to unlock the new life reading.',
+    funky: 'Summary load nahi hua — retry karo ya chart dubara cast karo.',
+    seedha: 'Could not load the life reading. Retry, or re-cast your chart.',
+    sick: 'Summary didn’t load — retry or re-cast.',
+  },
+  summaryLoading: {
+    funky: 'Poori kundli padh rahe hain…',
+    seedha: 'Reading your full chart into Past · Present · Future…',
+    sick: 'Cooking your life reading from the full chart…',
+  },
+  summaryRetry: {
+    funky: 'Phir se try',
+    seedha: 'Retry summary',
+    sick: 'Retry',
   },
   summaryRemedyFocus: {
     funky: '',
