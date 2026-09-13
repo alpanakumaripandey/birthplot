@@ -8,8 +8,7 @@ import { useLingo } from '../hooks/useLingo'
 import { useReveal } from '../hooks/useReveal'
 import type { LifeSummaryItem } from '../types'
 
-const LABELS = ['Past', 'Present', 'Future'] as const
-const CURRENT = 'life-llm-v1'
+const CURRENT = 'life-llm-v2'
 
 function pickReading(items: LifeSummaryItem[] | undefined): LifeSummaryItem | undefined {
   const list = items ?? []
@@ -103,38 +102,24 @@ export function ReportSummary() {
               </p>
             </div>
           ) : (
-            <article className="summary-consult">
-              {showReading.kicker || showReading.simple_summary ? (
-                <div className="match-simple-summary summary-hero-summary">
-                  <div className="match-simple-head">
-                    <h2>{t('summarySimpleTitle')}</h2>
-                    {showReading.simple_summary_source === 'llm' ? (
-                      <span className="match-simple-badge">{t('summaryAiBadge')}</span>
-                    ) : null}
-                  </div>
-                  <p>{showReading.simple_summary || showReading.kicker}</p>
-                </div>
-              ) : null}
-
-              {showReading.timing?.length ? (
-                <div className="summary-timing-row" aria-label="Timing">
-                  {showReading.timing.map((titem) => (
-                    <span key={`${titem.label}-${titem.range}`} className="summary-chip">
-                      <strong>{titem.label}</strong>
-                      <span>{titem.range}</span>
-                    </span>
+            <article className="summary-consult summary-story">
+              <div className="match-simple-head">
+                <h2 className="summary-story-title">
+                  {showReading.simple_summary || showReading.kicker || t('summarySimpleTitle')}
+                </h2>
+                {showReading.simple_summary_source === 'llm' ? (
+                  <span className="match-simple-badge">{t('summaryAiBadge')}</span>
+                ) : null}
+              </div>
+              {(showReading.insights ?? []).map((para) => (
+                <div key={para.slice(0, 40)} className="summary-story-body">
+                  {para.split(/\n\n+/).map((block) => (
+                    <p key={block.slice(0, 48)} className="summary-para">
+                      {block}
+                    </p>
                   ))}
                 </div>
-              ) : null}
-
-              <div className="summary-insights">
-                {(showReading.insights ?? []).map((para, i) => (
-                  <div key={LABELS[i] ?? String(i)} className="summary-block">
-                    <h2>{LABELS[i] ?? ''}</h2>
-                    <p className="summary-para">{para}</p>
-                  </div>
-                ))}
-              </div>
+              ))}
             </article>
           )}
         </div>

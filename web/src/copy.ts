@@ -423,19 +423,19 @@ export const COPY = {
   reportAsk: { funky: 'Poochho', seedha: 'Ask', sick: 'Ask' },
 
   summaryTitle: {
-    funky: 'Past · Present · Future',
-    seedha: 'Past · Present · Future',
-    sick: 'Past · Present · Future',
+    funky: 'Life summary',
+    seedha: 'Life summary',
+    sick: 'Life summary',
   },
   summaryLede: {
-    funky: 'Poori kundli ka seedha prediction — bina jargon.',
-    seedha: 'A plain-language life reading from your full chart — past, present, future.',
-    sick: 'Full-chart life read in plain talk — past, present, future. No jargon.',
+    funky: 'Seedhi baat: ab life kaisi chal rahi hai, aage kya dikhta hai.',
+    seedha: 'How life is going now, and what’s ahead — in plain words.',
+    sick: 'How life’s going + what’s next. Plain talk only.',
   },
   summarySimpleTitle: {
-    funky: 'Seedha headline',
-    seedha: 'Life headline',
-    sick: 'The headline',
+    funky: 'Teri kahani',
+    seedha: 'Your reading',
+    sick: 'Your reading',
   },
   summaryAiBadge: {
     funky: 'AI polish',

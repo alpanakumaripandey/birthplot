@@ -9,7 +9,7 @@ from kundli.chart import HouseInfo, KundliChart
 from kundli.dasha import DashaPeriod, DashaTimeline, _antardashas
 from kundli.simple_summary import life_predictive_summary
 
-CONTENT_VERSION = "life-llm-v1"
+CONTENT_VERSION = "life-llm-v2"
 
 SIGN_LORD = {
     "Aries": "Mars",
@@ -286,13 +286,9 @@ def build_life_summary(chart: KundliChart, timeline: DashaTimeline) -> List[dict
         timing.append({"label": lab, "range": rng})
         seen_rng.add(rng)
 
-    kicker = (
-        f"{maha.lord}–{antar.lord} · to {_fmt_end(maha)}"
-        if maha and antar
-        else "Past · Present · Future"
-    )
+    kicker = "Life reading"
 
-    headline, insights, source = life_predictive_summary(
+    headline, narrative, source = life_predictive_summary(
         chart=chart,
         timeline=timeline,
         draft_past=past,
@@ -307,8 +303,9 @@ def build_life_summary(chart: KundliChart, timeline: DashaTimeline) -> List[dict
             "kicker": headline or kicker,
             "simple_summary": headline,
             "simple_summary_source": source,
-            "insights": insights,
-            "timing": timing[:4],
+            # Single continuous narrative (UI shows as one reading, not 3 sections)
+            "insights": [narrative],
+            "timing": [],
             "ask_topic": "career",
             "version": CONTENT_VERSION,
         }

@@ -37,11 +37,11 @@ def test_life_summary_rules_when_no_key(monkeypatch):
     out = build_life_summary(chart, timeline)
     assert len(out) == 1
     item = out[0]
-    assert item["version"] == "life-llm-v1"
-    assert len(item["insights"]) == 3
+    assert item["version"] == "life-llm-v2"
+    assert len(item["insights"]) == 1
     assert item["simple_summary"]
     assert item["simple_summary_source"] in ("llm", "rules")
     # Without key must be rules
     assert item["simple_summary_source"] == "rules"
-    for para in item["insights"]:
-        assert len(para) > 30
+    assert len(item["insights"][0]) > 80
+    assert "Mahadasha" not in item["insights"][0]

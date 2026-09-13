@@ -253,21 +253,21 @@ def ask_plain_answer(
 
 
 _LIFE_SYSTEM = (
-    "You are a Vedic life reader writing for ordinary people. "
-    "Interpret the whole birth chart as Predictions for Past foundation, Present life, and Future outlook. "
-    "Use ONLY the facts given — do not invent planets, dates, or events not supported by the facts. "
-    "PURE everyday English. ZERO technical jargon: no house numbers, no Lagna, no Mahadasha names unless "
-    "you translate them (e.g. say 'a long Jupiter chapter until 2027' not 'Jupiter Mahadasha'). "
-    "No Sanskrit terms. No remedies. Write as confident, kind predictions. "
-    "Output EXACTLY this format with the three markers:\n"
+    "You are a warm life coach using Vedic chart facts. "
+    "Write ONE continuous reading in everyday English for a normal person. "
+    "Cover: how their life tends to go (work, money, love, home), how things are going now, "
+    "and what the near future looks like. "
+    "Use ONLY the facts given — do not invent specific events not supported by the facts. "
+    "FORBIDDEN: house numbers, Lagna, Mahadasha, Antardasha, nakshatra, rashi jargon, Sanskrit, "
+    "planet lists, remedies, section headers like Past/Present/Future. "
+    "If you mention timing, say it like 'until early 2027' or 'a longer chapter ahead'. "
+    "Output EXACTLY:\n"
     "===HEADLINE===\n"
-    "one short line\n"
-    "===PAST===\n"
-    "2-4 sentences: who they tend to be, work/money/love/home pattern from birth\n"
-    "===PRESENT===\n"
-    "2-4 sentences: what life feels like now — career, relationships, health tone, timing\n"
-    "===FUTURE===\n"
-    "2-4 sentences: what is coming — windows for work, love, and life changes\n"
+    "one short friendly line\n"
+    "===READING===\n"
+    "3 to 6 short paragraphs. First: who they are in life / patterns. "
+    "Middle: how life is going right now. Last: clear future prediction. "
+    "Sound human, kind, and predictive — not a textbook."
 )
 
 
@@ -296,78 +296,73 @@ def _life_chart_facts(
             f"Current shorter chapter lord: {a.lord} "
             f"({a.start.strftime('%b %Y')}–{a.end.strftime('%b %Y')})"
         )
-    lines.append("DRAFT PAST FACTS: " + draft_past)
-    lines.append("DRAFT PRESENT FACTS: " + draft_present)
-    lines.append("DRAFT FUTURE FACTS: " + draft_future)
+    lines.append("NOTES ON LIFE PATTERN: " + draft_past)
+    lines.append("NOTES ON NOW: " + draft_present)
+    lines.append("NOTES ON AHEAD: " + draft_future)
     return "\n".join(lines)
 
 
-def _parse_life_sections(text: str) -> Dict[str, str] | None:
-    markers = ("HEADLINE", "PAST", "PRESENT", "FUTURE")
-    found: Dict[str, str] = {}
-    for i, name in enumerate(markers):
-        start = text.find(f"==={name}===")
-        if start < 0:
-            return None
-        start += len(f"==={name}===")
-        end = len(text)
-        for nxt in markers[i + 1 :]:
-            pos = text.find(f"==={nxt}===", start)
-            if pos >= 0:
-                end = pos
-                break
-        found[name.lower()] = text[start:end].strip()
-    if not all(found.get(k) for k in ("past", "present", "future")):
+def _parse_life_reading(text: str) -> Tuple[str, str] | None:
+    h = text.find("===HEADLINE===")
+    r = text.find("===READING===")
+    if h < 0 or r < 0 or r < h:
+        # Accept bare prose as the full reading
+        prose = text.strip()
+        if len(prose) > 80:
+            first = prose.split("\n", 1)[0].strip()
+            headline = first if len(first) < 100 else f"Your life reading"
+            body = prose if len(first) >= 100 else prose[len(first) :].strip() or prose
+            return headline, body
         return None
-    return found
+    headline = text[h + len("===HEADLINE===") : r].strip()
+    body = text[r + len("===READING===") :].strip()
+    if not body:
+        return None
+    return headline or "Your life reading", body
 
 
-def _rules_life_predictive(
+def _soft_jargon(text: str) -> str:
+    out = text
+    for word, rep in (
+        ("Mahadasha", "long chapter"),
+        ("Antardasha", "shorter chapter"),
+        ("Lagna", "natural style"),
+        ("nakshatra", "birth star"),
+        ("rashi", "sign"),
+        ("10th lord", "career guide"),
+        ("7th lord", "partnership guide"),
+        ("2nd lord", "money guide"),
+        ("4th lord", "home guide"),
+        ("6th lord", "health guide"),
+        ("house", "part of life"),
+    ):
+        out = out.replace(word, rep)
+    return out
+
+
+def _rules_life_narrative(
     chart: Any,
     draft_past: str,
     draft_present: str,
     draft_future: str,
-) -> Tuple[str, List[str]]:
-    """Plain predictive fallback without LLM."""
+) -> Tuple[str, str]:
+    """One flowing plain narrative without LLM."""
     name = chart.birth.name
     rising = chart.lagna.rashi_name
     moon = chart.planets["Moon"].info.rashi_name
-    headline = f"{name}'s life path — past roots, present chapter, future windows"
-    past = (
-        f"{name} comes into life with a {rising} rising style and a {moon} emotional tone. "
-        f"From birth the chart points to lasting patterns in work, money, partnership, and home. "
-        f"{draft_past}"
+    headline = f"{name} — how life is going, and what’s ahead"
+    past = _soft_jargon(draft_past)
+    present = _soft_jargon(draft_present)
+    future = _soft_jargon(draft_future)
+    body = (
+        f"{name}, your natural style leans {rising}, and emotionally you move with a {moon} feel. "
+        f"That shapes how work, money, love, and home tend to play out for you. {past}\n\n"
+        f"Right now: {present} This is the chapter you’re living — notice what’s active in career "
+        f"and relationships, and keep your health habits steady.\n\n"
+        f"Looking ahead: {future} The next stretch can open clearer doors if you stay consistent. "
+        f"Use the timing as a guide, not a cage — your choices still write the story."
     )
-    # Soften jargon words in drafts
-    for word, rep in (
-        ("Mahadasha", "long life chapter"),
-        ("Antardasha", "shorter chapter"),
-        ("Lagna", "rising style"),
-        ("10th", "career zone"),
-        ("7th", "partnership zone"),
-        ("2nd", "money zone"),
-        ("4th", "home zone"),
-        ("6th", "health/effort zone"),
-        ("house", "life area"),
-    ):
-        past = past.replace(word, rep)
-    present = draft_present
-    future = draft_future
-    for word, rep in (
-        ("Mahadasha", "long chapter"),
-        ("Antardasha", "shorter chapter"),
-    ):
-        present = present.replace(word, rep)
-        future = future.replace(word, rep)
-    present = (
-        f"Right now, this is the active chapter of life. {present} "
-        "Treat it as weather for decisions — your effort still steers the result."
-    )
-    future = (
-        f"Looking ahead: {future} "
-        "Stay open to timing, but keep building day by day."
-    )
-    return headline, [past, present, future]
+    return headline, body
 
 
 def life_predictive_summary(
@@ -377,29 +372,21 @@ def life_predictive_summary(
     draft_past: str,
     draft_present: str,
     draft_future: str,
-) -> Tuple[str, List[str], str]:
+) -> Tuple[str, str, str]:
     """
-    Return (headline, [past, present, future], source).
-    LLM preferred; rules fallback always available.
+    Return (headline, full_narrative, source) where source is 'llm' or 'rules'.
+    One continuous reading — not Past/Present/Future sections.
     """
     facts = _life_chart_facts(chart, timeline, draft_past, draft_present, draft_future)
     llm = _call_llm(
         _LIFE_SYSTEM,
-        f"Write the life prediction from these chart facts:\n\n{facts}",
-        max_tokens=700,
+        f"Write one continuous life summary from these chart facts:\n\n{facts}",
+        max_tokens=650,
     )
     if llm:
-        parsed = _parse_life_sections(llm)
+        parsed = _parse_life_reading(llm)
         if parsed:
-            headline = parsed.get("headline") or f"{chart.birth.name} — life reading"
-            return headline, [parsed["past"], parsed["present"], parsed["future"]], "llm"
-        # LLM returned prose without markers — use as present-focused single block split
-        paras = [p.strip() for p in llm.split("\n\n") if p.strip()]
-        if len(paras) >= 3:
-            return (
-                f"{chart.birth.name} — life reading",
-                paras[:3],
-                "llm",
-            )
-    headline, insights = _rules_life_predictive(chart, draft_past, draft_present, draft_future)
-    return headline, insights, "rules"
+            headline, body = parsed
+            return headline, body, "llm"
+    headline, body = _rules_life_narrative(chart, draft_past, draft_present, draft_future)
+    return headline, body, "rules"
