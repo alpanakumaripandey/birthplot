@@ -935,7 +935,7 @@ def match_charts(person_a: KundliChart, person_b: KundliChart) -> Dict[str, Any]
             action_plan.append(sol)
 
     return {
-        "version": "ashtakoota-v4",
+        "version": "ashtakoota-v5",
         "total": total,
         "max": max_total,
         "verdict": verdict,

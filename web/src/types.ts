@@ -77,6 +77,12 @@ export type LifeSummaryTiming = {
   range: string
 }
 
+export type LifeSummarySection = {
+  id: string
+  title: string
+  body: string
+}
+
 /** Narrative insight panel (new). Older FAQ-shaped items may still exist in saved charts. */
 export type LifeSummaryItem = {
   id: string
@@ -84,6 +90,7 @@ export type LifeSummaryItem = {
   kicker?: string
   simple_summary?: string
   simple_summary_source?: 'llm' | 'rules'
+  sections?: LifeSummarySection[]
   insights?: string[]
   timing?: LifeSummaryTiming[]
   ask_topic: string
@@ -182,6 +189,12 @@ export type MatchGunaGuide = {
   simple: string
 }
 
+export type MatchSection = {
+  id: string
+  title: string
+  body: string
+}
+
 export type MatchReport = {
   version: string
   total: number
@@ -190,6 +203,7 @@ export type MatchReport = {
   summary?: string
   simple_summary?: string
   simple_summary_source?: 'llm' | 'rules'
+  sections?: MatchSection[]
   overview?: string[]
   guna_guide?: MatchGunaGuide[]
   action_plan?: string[]

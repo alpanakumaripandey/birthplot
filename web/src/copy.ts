@@ -423,14 +423,14 @@ export const COPY = {
   reportAsk: { funky: 'Poochho', seedha: 'Ask', sick: 'Ask' },
 
   summaryTitle: {
-    funky: 'Life summary',
-    seedha: 'Life summary',
-    sick: 'Life summary',
+    funky: 'Life reading',
+    seedha: 'Life reading',
+    sick: 'Life reading',
   },
   summaryLede: {
-    funky: 'Seedhi baat: ab life kaisi chal rahi hai, aage kya dikhta hai.',
-    seedha: 'How life is going now, and what’s ahead — in plain words.',
-    sick: 'How life’s going + what’s next. Plain talk only.',
+    funky: 'Personality, career, love, abhi kya chal raha hai, aur aage kya — seedhi detailed baat.',
+    seedha: 'A clear deep dive: personality, career, relationships, how life is going now, and what’s ahead.',
+    sick: 'Deep dive: who you are, work, love, right now, and what’s next — clear words.',
   },
   summarySimpleTitle: {
     funky: 'Teri kahani',
@@ -453,9 +453,9 @@ export const COPY = {
     sick: 'Summary didn’t load — retry or re-cast.',
   },
   summaryLoading: {
-    funky: 'Poori kundli padh rahe hain…',
-    seedha: 'Reading your full chart into Past · Present · Future…',
-    sick: 'Cooking your life reading from the full chart…',
+    funky: 'Poori kundli padh rahe hain — thoda wait…',
+    seedha: 'Writing your deep-dive reading from the full chart…',
+    sick: 'Cooking your full life reading…',
   },
   summaryRetry: {
     funky: 'Phir se try',
@@ -495,27 +495,22 @@ export const COPY = {
   },
   matchLede: {
     funky:
-      'Do logon ke Moon charts → 36 guna. Score ke saath plain English: kya strong hai, kahan sochna hai.',
+      'Do charts → clear deep dive: fit, daily life, careful spots, Manglik, aur aage kya — seedhi baat.',
     seedha:
-      'Compare two birth charts with Ashtakoota (36 points). The result explains each guna in plain language.',
+      'A clear deep dive for two charts: how you fit, daily life, where to be careful, Mars energy, and what’s ahead.',
     sick:
-      'Two Moons, 36 gunas — then we translate the score so anyone gets what’s strong and what needs talk.',
+      'Deep dive for two Moons — chemistry, daily life, watch-outs, Manglik, and what’s next — clear words.',
   },
   matchPersonA: { funky: 'Person A (bride-side)', seedha: 'Person A (bride-side)', sick: 'Person A (bride-side)' },
   matchPersonB: { funky: 'Person B (groom-side)', seedha: 'Person B (groom-side)', sick: 'Person B (groom-side)' },
   matchSubmit: { funky: 'Milan chalao', seedha: 'Match charts', sick: 'Run the match' },
   matchLoadDemo: { funky: 'Demo jodi', seedha: 'Load demo pair', sick: 'Load demo pair' },
   matchReading: {
-    funky: 'Dono kundli milayi ja rahi hai…',
-    seedha: 'Matching both charts…',
-    sick: 'Cross-checking both skies…',
+    funky: 'Jodi ki poori reading ban rahi hai…',
+    seedha: 'Writing your match deep-dive…',
+    sick: 'Cooking the full match reading…',
   },
   matchScoreLabel: { funky: 'Guna score', seedha: 'Guna score', sick: 'Guna score' },
-  matchBreakdown: {
-    funky: 'Har guna — detail + solution',
-    seedha: 'Each guna: detail & solutions',
-    sick: 'Guna by guna — detail + fixes',
-  },
   matchStrengths: { funky: 'Strong areas', seedha: 'Strengths', sick: 'What’s strong' },
   matchWatchouts: { funky: 'Dhyan dena', seedha: 'Watch-outs', sick: 'Talk these through' },
   matchActionPlan: {
@@ -534,14 +529,24 @@ export const COPY = {
     sick: 'Read this first — the whole match in plain talk.',
   },
   matchSimpleSummary: {
-    funky: 'Seedha summary',
-    seedha: 'Simple summary',
-    sick: 'TL;DR',
+    funky: 'Jodi ki reading',
+    seedha: 'Your match reading',
+    sick: 'Your match reading',
   },
   matchSimpleLlm: {
     funky: 'AI polish',
-    seedha: 'AI summary',
+    seedha: 'AI reading',
     sick: 'AI wrote this',
+  },
+  matchDeepHint: {
+    funky: 'Pehle ye deep dive padho — phir neeche guna breakdown.',
+    seedha: 'Read this deep dive first — full guna breakdown is below if you want the numbers.',
+    sick: 'Deep dive first — numbers below if you want them.',
+  },
+  matchBreakdown: {
+    funky: 'Guna breakdown — detail + solution',
+    seedha: 'Full guna breakdown',
+    sick: 'Guna by guna — detail + fixes',
   },
   matchGunaGuide: {
     funky: 'Har guna kya poochhta hai',

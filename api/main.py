@@ -177,9 +177,10 @@ def match(body: MatchRequest) -> Dict[str, Any]:
         chart_a = build_chart(_parse_birth(body.person_a))
         chart_b = build_chart(_parse_birth(body.person_b))
         result = match_charts(chart_a, chart_b)
-        simple, source = match_simple_summary(result)
-        result["simple_summary"] = simple
+        headline, sections, source = match_simple_summary(result)
+        result["simple_summary"] = headline
         result["simple_summary_source"] = source
+        result["sections"] = sections
         return result
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

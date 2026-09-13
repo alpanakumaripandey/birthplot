@@ -240,7 +240,32 @@ export function Match() {
             <p className="match-verdict">{result.verdict}</p>
           </div>
 
-          {result.simple_summary ? (
+          {result.sections && result.sections.length > 0 ? (
+            <article className="match-simple-summary match-deep-reading">
+              <div className="match-simple-head">
+                <h2>{result.simple_summary || t('matchSimpleSummary')}</h2>
+                {result.simple_summary_source === 'llm' ? (
+                  <span className="match-simple-badge">{t('matchSimpleLlm')}</span>
+                ) : null}
+              </div>
+              <p className="match-overview-hint">{t('matchDeepHint')}</p>
+              <div className="summary-deep-sections">
+                {result.sections.map((sec, idx) => (
+                  <section key={sec.id} className="summary-deep-block">
+                    <h3>
+                      <span className="summary-deep-num">{idx + 1}</span>
+                      {sec.title}
+                    </h3>
+                    {sec.body.split(/\n\n+/).map((block) => (
+                      <p key={block.slice(0, 56)} className="summary-para">
+                        {block}
+                      </p>
+                    ))}
+                  </section>
+                ))}
+              </div>
+            </article>
+          ) : result.simple_summary ? (
             <div className="match-simple-summary">
               <div className="match-simple-head">
                 <h2>{t('matchSimpleSummary')}</h2>
@@ -252,7 +277,9 @@ export function Match() {
             </div>
           ) : null}
 
-          {result.overview && result.overview.length > 0 ? (
+          {!(result.sections && result.sections.length > 0) &&
+          result.overview &&
+          result.overview.length > 0 ? (
             <div className="match-overview" id="match-full-summary">
               <h2>{t('matchOverview')}</h2>
               <p className="match-overview-hint">{t('matchOverviewHint')}</p>
@@ -260,7 +287,7 @@ export function Match() {
                 <p key={`ov-${i}`}>{para}</p>
               ))}
             </div>
-          ) : result.summary ? (
+          ) : !(result.sections && result.sections.length > 0) && result.summary ? (
             <p className="match-summary">{result.summary}</p>
           ) : null}
 
@@ -269,7 +296,9 @@ export function Match() {
             <MoonLine person={result.person_b} />
           </div>
 
-          {result.guna_guide && result.guna_guide.length > 0 ? (
+          {!(result.sections && result.sections.length > 0) &&
+          result.guna_guide &&
+          result.guna_guide.length > 0 ? (
             <div className="match-guna-guide">
               <h2>{t('matchGunaGuide')}</h2>
               <ul>
@@ -282,7 +311,9 @@ export function Match() {
             </div>
           ) : null}
 
-          {result.action_plan && result.action_plan.length > 0 ? (
+          {!(result.sections && result.sections.length > 0) &&
+          result.action_plan &&
+          result.action_plan.length > 0 ? (
             <div className="match-action-plan">
               <h2>{t('matchActionPlan')}</h2>
               <ol>
@@ -293,7 +324,8 @@ export function Match() {
             </div>
           ) : null}
 
-          {(result.strengths?.length || result.watchouts?.length) ? (
+          {!(result.sections && result.sections.length > 0) &&
+          (result.strengths?.length || result.watchouts?.length) ? (
             <div className="match-highlights">
               {result.strengths && result.strengths.length > 0 ? (
                 <div>

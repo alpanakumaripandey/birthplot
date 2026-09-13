@@ -9,7 +9,7 @@ from kundli.chart import HouseInfo, KundliChart
 from kundli.dasha import DashaPeriod, DashaTimeline, _antardashas
 from kundli.simple_summary import life_predictive_summary
 
-CONTENT_VERSION = "life-llm-v2"
+CONTENT_VERSION = "life-llm-v4"
 
 SIGN_LORD = {
     "Aries": "Mars",
@@ -160,7 +160,7 @@ def _windows(
             if maha.start <= timeline.current_mahadasha.start:
                 continue
             if maha.lord in keys:
-                scored.append((maha.start, f"{maha.lord} Mahadasha", _fmt(maha), 4))
+                scored.append((maha.start, f"{maha.lord} long chapter", _fmt(maha), 4))
             else:
                 for antar in _antardashas(maha):
                     if antar.end <= now:
@@ -241,38 +241,47 @@ def build_life_summary(chart: KundliChart, timeline: DashaTimeline) -> List[dict
         c_keys = _keys_for_houses(chart, (10, 2, 11))
         l_keys = _keys_for_houses(chart, (7, 4), ("Venus", "Jupiter"))
         career_now = (
-            "Career and money are in an active window"
+            "Career and money themes are active"
             if maha.lord in c_keys or antar.lord in c_keys or maha.lord in h10.planets or antar.lord in h10.planets
-            else "Career and money are in a steadier window"
+            else "Career and money are in a steadier stretch"
         )
         love_now = (
-            "Relationship themes are active"
+            "relationship themes are also in focus"
             if maha.lord in l_keys or antar.lord in l_keys
-            else "Relationship pace is quieter"
+            else "relationship pace is quieter for now"
         )
         present = (
-            f"Age {age}. {maha.lord} Mahadasha until {_fmt_end(maha)}; "
-            f"{antar.lord} Antardasha {_fmt(antar)}. "
-            f"{career_now}. {love_now}. "
-            f"Health watch: {HEALTH_BY_SIGN[h6.rashi_name]}."
+            f"Around age {age}, you are in a longer {maha.lord} life chapter that runs until "
+            f"{_fmt_end(maha)}, with a shorter {antar.lord} phase from {_fmt(antar)}. "
+            f"{career_now}, and {love_now}. "
+            f"Health-wise, stay mindful of {HEALTH_BY_SIGN[h6.rashi_name]}."
         )
     else:
-        present = f"Age {age}. Need precise birth time for the current dasha clock."
+        present = (
+            f"Around age {age}. A precise birth time would sharpen the current timing clock; "
+            f"the chart still shows your core life patterns clearly."
+        )
 
     future_bits: List[str] = []
     if next_m:
-        future_bits.append(f"Next Mahadasha {next_m.lord} {_fmt(next_m)}")
+        future_bits.append(
+            f"Your next long life chapter is {next_m.lord}, from {_fmt(next_m)}"
+        )
     if future_career:
-        future_bits.append(
-            "Career/money: " + "; ".join(f"{lab} {rng}" for lab, rng in future_career[:2])
+        labs = "; ".join(
+            f"{lab} around {rng}" for lab, rng in future_career[:2]
         )
+        future_bits.append(f"Career and money windows to watch: {labs}")
     if future_love:
-        future_bits.append(
-            "Marriage/home: " + "; ".join(f"{lab} {rng}" for lab, rng in future_love[:2])
-        )
+        labs = "; ".join(f"{lab} around {rng}" for lab, rng in future_love[:2])
+        future_bits.append(f"Marriage and home windows to watch: {labs}")
     if manglik and age < 28:
-        future_bits.append("Manglik heat eases after age 28")
-    future = ". ".join(future_bits) + "." if future_bits else "No stronger near window listed."
+        future_bits.append("Manglik intensity usually eases after age 28")
+    future = (
+        ". ".join(future_bits) + "."
+        if future_bits
+        else "No single louder near-term window stands out — steady growth is the theme."
+    )
 
     timing: List[dict] = []
     if maha and antar:
@@ -288,12 +297,17 @@ def build_life_summary(chart: KundliChart, timeline: DashaTimeline) -> List[dict
 
     kicker = "Life reading"
 
-    headline, narrative, source = life_predictive_summary(
+    headline, sections, source = life_predictive_summary(
         chart=chart,
         timeline=timeline,
         draft_past=past,
         draft_present=present,
         draft_future=future,
+    )
+
+    # Keep insights as joined narrative for older clients; UI prefers sections
+    narrative = "\n\n".join(
+        f"{s['title']}\n{s['body']}" for s in sections
     )
 
     return [
@@ -303,8 +317,8 @@ def build_life_summary(chart: KundliChart, timeline: DashaTimeline) -> List[dict
             "kicker": headline or kicker,
             "simple_summary": headline,
             "simple_summary_source": source,
-            # Single continuous narrative (UI shows as one reading, not 3 sections)
-            "insights": [narrative],
+            "sections": sections,
+            "insights": [narrative] if narrative else [],
             "timing": [],
             "ask_topic": "career",
             "version": CONTENT_VERSION,

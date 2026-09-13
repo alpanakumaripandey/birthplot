@@ -53,9 +53,16 @@ def _demo_match() -> dict:
 def test_rules_simple_summary_without_api_key(monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("LLM_API_KEY", raising=False)
+    monkeypatch.delenv("TOKENHARBOR_API_KEY", raising=False)
     report = _demo_match()
-    text, source = match_simple_summary(report)
+    headline, sections, source = match_simple_summary(report)
     assert source == "rules"
-    assert "Mira" in text and "Kabir" in text
-    assert "36" in text
-    assert len(text) > 80
+    assert "Mira" in headline and "Kabir" in headline
+    assert sections and len(sections) >= 5
+    ids = [s["id"] for s in sections]
+    assert "intro" in ids and "ahead" in ids and "manglik" in ids
+    joined = " ".join(s["body"] for s in sections)
+    assert "36" in joined
+    assert len(joined) > 200
+    for s in sections:
+        assert len(s["body"]) > 40

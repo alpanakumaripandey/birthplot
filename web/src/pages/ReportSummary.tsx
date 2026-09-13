@@ -8,15 +8,21 @@ import { useLingo } from '../hooks/useLingo'
 import { useReveal } from '../hooks/useReveal'
 import type { LifeSummaryItem } from '../types'
 
-const CURRENT = 'life-llm-v2'
+const CURRENT = 'life-llm-v4'
 
 function pickReading(items: LifeSummaryItem[] | undefined): LifeSummaryItem | undefined {
   const list = items ?? []
-  const preferred = list.find(
-    (p) => p.version === CURRENT && Array.isArray(p.insights) && p.insights.length > 0,
-  )
+  const preferred = list.find((p) => {
+    if (p.version !== CURRENT) return false
+    if (p.sections && p.sections.length > 0) return true
+    return Array.isArray(p.insights) && p.insights.length > 0
+  })
   if (preferred) return preferred
-  return list.find((p) => Array.isArray(p.insights) && p.insights.length > 0)
+  return list.find(
+    (p) =>
+      (p.sections && p.sections.length > 0) ||
+      (Array.isArray(p.insights) && p.insights.length > 0),
+  )
 }
 
 export function ReportSummary() {
@@ -111,15 +117,34 @@ export function ReportSummary() {
                   <span className="match-simple-badge">{t('summaryAiBadge')}</span>
                 ) : null}
               </div>
-              {(showReading.insights ?? []).map((para) => (
-                <div key={para.slice(0, 40)} className="summary-story-body">
-                  {para.split(/\n\n+/).map((block) => (
-                    <p key={block.slice(0, 48)} className="summary-para">
-                      {block}
-                    </p>
+
+              {showReading.sections && showReading.sections.length > 0 ? (
+                <div className="summary-deep-sections">
+                  {showReading.sections.map((sec, idx) => (
+                    <section key={sec.id} className="summary-deep-block">
+                      <h3>
+                        <span className="summary-deep-num">{idx + 1}</span>
+                        {sec.title}
+                      </h3>
+                      {sec.body.split(/\n\n+/).map((block) => (
+                        <p key={block.slice(0, 56)} className="summary-para">
+                          {block}
+                        </p>
+                      ))}
+                    </section>
                   ))}
                 </div>
-              ))}
+              ) : (
+                <div className="summary-story-body">
+                  {(showReading.insights ?? []).map((para) =>
+                    para.split(/\n\n+/).map((block) => (
+                      <p key={block.slice(0, 48)} className="summary-para">
+                        {block}
+                      </p>
+                    )),
+                  )}
+                </div>
+              )}
             </article>
           )}
         </div>

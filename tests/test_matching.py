@@ -48,10 +48,11 @@ def test_ashtakoota_mira_kabir():
         place=JAIPUR,
     )
     result = match_charts(a, b)
-    simple, source = match_simple_summary(result)
-    result["simple_summary"] = simple
+    headline, sections, source = match_simple_summary(result)
+    result["simple_summary"] = headline
     result["simple_summary_source"] = source
-    assert result["version"] == "ashtakoota-v4"
+    result["sections"] = sections
+    assert result["version"] == "ashtakoota-v5"
     assert result["max"] == 36
     assert 0 <= result["total"] <= 36
     assert len(result["kootas"]) == 8
@@ -69,7 +70,9 @@ def test_ashtakoota_mira_kabir():
     assert result["manglik_title"]
     assert "simple_summary" in result
     assert result["simple_summary_source"] in ("llm", "rules")
-    assert len(result["simple_summary"]) > 50
+    assert len(result["simple_summary"]) > 20
+    assert result["sections"] and len(result["sections"]) >= 5
+    assert {s["id"] for s in result["sections"]} >= {"intro", "fit", "ahead"}
     weak = [k for k in result["kootas"] if k["level"] == "weak"]
     for k in weak:
         assert k.get("problem")

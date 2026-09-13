@@ -2819,6 +2819,14 @@ select {
   background: var(--surface-strong);
 }
 
+.match-deep-reading .summary-deep-sections {
+  margin-top: 0.85rem;
+}
+
+.match-deep-reading .match-overview-hint {
+  margin: 0.35rem 0 0;
+}
+
 .summary-hero-summary {
   margin-top: var(--space-3);
 }
@@ -2847,6 +2855,47 @@ select {
 }
 
 .summary-story-body .summary-para:last-child {
+  margin-bottom: 0;
+}
+
+.summary-deep-sections {
+  margin-top: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.summary-deep-block h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  margin: 0 0 0.55rem;
+  color: var(--brass);
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.summary-deep-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border: 1px solid var(--jade);
+  color: var(--jade);
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.summary-deep-block .summary-para {
+  margin: 0 0 0.65rem;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  max-width: 42rem;
+}
+
+.summary-deep-block .summary-para:last-child {
   margin-bottom: 0;
 }
 
