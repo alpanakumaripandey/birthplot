@@ -9,6 +9,8 @@ build/
 kundli/.ephemeris/
 web/node_modules/
 web/dist/
+.env
+.env.local
 web/.env
 web/.env.local
 *.txt

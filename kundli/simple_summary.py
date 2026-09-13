@@ -8,15 +8,23 @@ import urllib.error
 import urllib.request
 from typing import Any, Dict, List, Tuple
 
-# OpenAI-compatible chat API (OpenAI, Groq, OpenRouter, etc.)
-_DEFAULT_BASE = "https://api.openai.com/v1"
-_DEFAULT_MODEL = "gpt-4o-mini"
+# OpenAI-compatible chat API (Token Harbor, OpenAI, Groq, OpenRouter, …)
+_DEFAULT_BASE = "https://tokenharbor.ai/v1"
+_DEFAULT_MODEL = "th-orchestra"
 
 
 def _api_config() -> Tuple[str | None, str, str]:
-    key = (os.environ.get("LLM_API_KEY") or os.environ.get("OPENAI_API_KEY") or "").strip()
+    key = (
+        os.environ.get("LLM_API_KEY")
+        or os.environ.get("TOKENHARBOR_API_KEY")
+        or os.environ.get("OPENAI_API_KEY")
+        or ""
+    ).strip()
     base = (os.environ.get("LLM_BASE_URL") or _DEFAULT_BASE).rstrip("/")
     model = (os.environ.get("LLM_MODEL") or _DEFAULT_MODEL).strip()
+    # Token Harbor keys need the Token Harbor base even if LLM_BASE_URL was unset.
+    if key.startswith("thk_") and "LLM_BASE_URL" not in os.environ:
+        base = "https://tokenharbor.ai/v1"
     return key or None, base, model
 
 

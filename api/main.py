@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from datetime import date, datetime, time
+from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional
 
 from fastapi import FastAPI, HTTPException
@@ -17,6 +18,25 @@ from kundli.matching import match_charts
 from kundli.qa import answer_question, list_topics_help
 from kundli.simple_summary import match_simple_summary
 from api.serialize import build_full_report
+
+
+def _load_dotenv() -> None:
+    """Load repo-root `.env` into os.environ if present (no dependency on python-dotenv)."""
+    path = Path(__file__).resolve().parents[1] / ".env"
+    if not path.is_file():
+        return
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, val = line.partition("=")
+        key = key.strip()
+        val = val.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = val
+
+
+_load_dotenv()
 
 _LOCAL_ORIGINS = [
     "http://localhost:5173",

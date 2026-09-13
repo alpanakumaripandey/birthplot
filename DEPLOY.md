@@ -61,10 +61,14 @@ cd web && npm run dev
 
 ## Optional: AI simple summary (Match)
 
+Local: copy `.env.example` → `.env` and fill in (`.env` is gitignored).
+
 On Render, add env vars:
 
-- **`OPENAI_API_KEY`** or **`LLM_API_KEY`** — enables LLM-polished Match summary
-- **`LLM_BASE_URL`** (optional) — e.g. `https://api.groq.com/openai/v1`
-- **`LLM_MODEL`** (optional) — e.g. `llama-3.1-8b-instant` or `gpt-4o-mini`
+- **`LLM_API_KEY`** — Token Harbor Universal Key (`thk_live_…`) or any OpenAI-compatible key
+- **`LLM_BASE_URL`** — `https://tokenharbor.ai/v1` (Token Harbor) or another OpenAI-compatible base
+- **`LLM_MODEL`** — e.g. `th-orchestra` (Token Harbor) or `gpt-4o-mini`
 
 Without a key, Match still returns a **rule-based simple summary** at the top.
+
+**Security:** never commit API keys. If a key was pasted in chat/email, rotate it in the Token Harbor dashboard.
