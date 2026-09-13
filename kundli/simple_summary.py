@@ -442,25 +442,33 @@ _LIFE_SYSTEM = (
     "You write a comprehensive Vedic birth-chart deep dive in clear, normal English — "
     "warm, specific, and easy to read aloud. Sound like a thoughtful astrologer talking to a friend, "
     "not a textbook and not a chatbot list. "
-    "Name rising sign, Moon sign, birth star, and Sun sign in the intro; explain each in plain words. "
-    "Do NOT use house numbers, lord jargon, Mahadasha/Antardasha labels, or bullet symbols. "
+    "CRITICAL: Every chart is unique. Use the SPECIFIC rising, Moon, birth star, Sun, planet houses, "
+    "career fields, partner tone, Manglik status, and timing from the facts. "
+    "Do NOT reuse generic filler like 'steady effort beats shortcuts' or 'late twenties deepen love' "
+    "unless the facts support that timing. "
+    "You MUST state clearly whether the person is Manglik or not (Mars energy), and what that means "
+    "in everyday words for marriage/temper — using the Manglik facts given. "
+    "Name rising sign, Moon sign, birth star, and Sun sign in the intro. "
+    "Do NOT dump long house-number lists; translate placements into life language. "
     "Timing: say 'until Aug 2035' or 'a longer Jupiter chapter from 2035' — never dump raw dasha strings. "
-    "Use ONLY the facts given. No remedies, no emoji, no markdown headings except the required markers. "
-    "Each section should be 2–3 full sentences (detailed but not endless). "
-    "Finish EVERY section completely — especially FUTURE. "
+    "Use ONLY the facts given. No ritual remedies, no emoji, no markdown headings except the required markers. "
+    "Each section: 2–3 full sentences. Finish EVERY section completely — especially FUTURE and MANGLIK. "
     "Output EXACTLY these markers with no extra labels:\n"
     "===INTRO===\n"
-    "Open with birth details in prose: rising, Moon (+ star), Sun — and the overall life tone they create.\n"
+    "Rising, Moon (+ star), Sun — and the overall life tone. Mention one unique chart detail.\n"
     "===PERSONALITY===\n"
-    "Emotional style, how they guard or share feelings, listening/ambition mindset, how they relate day to day.\n"
+    "Emotional style from rising + Moon + birth-star summary; how they guard or share feelings.\n"
     "===CAREER===\n"
-    "Work fields that fit, how money tends to grow, and any foreign / remote / tech / leadership themes from the facts.\n"
+    "Use the given career fields and money/foreign notes from the facts — be specific to THIS chart.\n"
     "===RELATIONSHIPS===\n"
-    "Likely partner qualities, marriage tone, and when emotional ease in love usually deepens.\n"
+    "Partner qualities from the given 7th-sign tone and marriage notes — specific to THIS chart.\n"
+    "===MANGLIK===\n"
+    "State Manglik yes or no, Mars placement in plain words, and practical meaning for love/temper. "
+    "If softened by Venus/Jupiter, say so.\n"
     "===NOW===\n"
-    "Present life chapter in plain words: focus (identity, work, love, security), opportunities, and what to watch.\n"
+    "Present life chapter from the timing facts — focus, opportunities, health watch if given.\n"
     "===FUTURE===\n"
-    "Near-term and mid-future outlook for career, relationships, and direction — with concrete timing when facts give it.\n"
+    "Near- and mid-future for career, love, and direction with concrete timing from the facts.\n"
 )
 
 
@@ -469,9 +477,74 @@ _SECTION_ORDER = (
     ("personality", "PERSONALITY", "Personality & mind"),
     ("career", "CAREER", "Career & wealth"),
     ("relationships", "RELATIONSHIPS", "Relationships & marriage"),
+    ("manglik", "MANGLIK", "Manglik / Mars energy"),
     ("now", "NOW", "How life is going now"),
     ("future", "FUTURE", "What’s ahead"),
 )
+
+_HOUSE_PLAIN = {
+    1: "self and body",
+    2: "money and family voice",
+    3: "siblings, courage, and short efforts",
+    4: "home and emotional roots",
+    5: "creativity, romance, and children themes",
+    6: "work stress, rivals, and daily health",
+    7: "marriage and one-to-one partnerships",
+    8: "shared intensity, sudden change, and deep bonds",
+    9: "luck, learning, and long journeys",
+    10: "career and public reputation",
+    11: "gains, networks, and goals",
+    12: "foreign places, solitude, or hidden costs",
+}
+
+
+def _nak_summary(nak_name: str) -> str:
+    try:
+        from kundli.knowledge_loader import nakshatras
+
+        for row in nakshatras().values():
+            if row.get("name") == nak_name:
+                return str(row.get("summary") or "").strip()
+    except Exception:  # noqa: BLE001
+        pass
+    return ""
+
+
+def _manglik_fact_lines(chart: Any) -> Tuple[bool, bool, str, List[str]]:
+    """Return (is_manglik, mitigated, mars_plain, fact_lines)."""
+    mars = chart.planets["Mars"]
+    mars_h = mars.house
+    is_m = mars_h in (1, 4, 7, 8, 12)
+    venus_h = chart.planets["Venus"].house
+    jup_h = chart.planets["Jupiter"].house
+    h7_planets = chart.houses[6].planets
+    mitigated = is_m and (
+        venus_h in (1, 4, 5, 7, 9, 10)
+        or jup_h in (1, 4, 7, 10)
+        or "Venus" in h7_planets
+        or "Jupiter" in h7_planets
+    )
+    where = _HOUSE_PLAIN.get(mars_h, f"house {mars_h}")
+    mars_plain = f"Mars in {mars.info.rashi_name}, linked to {where}"
+    lines = [
+        f"Manglik status: {'YES' if is_m else 'NO'}",
+        f"Mars detail: {mars_plain}",
+        f"Manglik softened by Venus/Jupiter: {'yes' if mitigated else 'no'}",
+    ]
+    if is_m:
+        lines.append(
+            "Manglik meaning: higher heat in will, temper, and early married-life pace — "
+            "needs cool-down habits, not panic."
+        )
+        if mitigated:
+            lines.append(
+                "Softening: Venus/Jupiter support reduces the harsh edge of Manglik for marriage tone."
+            )
+    else:
+        lines.append(
+            "Manglik meaning: Mars is not in a classic Manglik house — no Manglik flag for this chart."
+        )
+    return is_m, mitigated, mars_plain, lines
 
 
 def _life_chart_facts(
@@ -483,15 +556,33 @@ def _life_chart_facts(
 ) -> str:
     moon = chart.planets["Moon"]
     sun = chart.planets["Sun"]
+    h7 = chart.houses[6]
+    h10 = chart.houses[9]
+    h12 = chart.houses[11]
+    h2 = chart.houses[1]
+    nak_sum = _nak_summary(moon.info.nakshatra_name)
     lines = [
         f"Name: {chart.birth.name}",
         f"Rising sign (Ascendant): {chart.lagna.rashi_name}",
         f"Moon sign: {moon.info.rashi_name}; birth star: {moon.info.nakshatra_name} pada {moon.info.pada}",
+        f"Birth-star meaning: {nak_sum or 'use Moon sign tone'}",
         f"Sun sign: {sun.info.rashi_name}",
+        f"10th-sign career tone: {_CAREER_TONE.get(h10.rashi_name, 'skilled work')}",
+        f"Planets in career house (10th): {', '.join(h10.planets) if h10.planets else 'empty'}",
+        f"7th-sign partner tone: {_PARTNER_TONE.get(h7.rashi_name, 'steady')}",
+        f"Planets in marriage house (7th): {', '.join(h7.planets) if h7.planets else 'empty'}",
+        f"Planets in money house (2nd): {', '.join(h2.planets) if h2.planets else 'empty'}",
+        f"Planets in foreign/solitude house (12th): {', '.join(h12.planets) if h12.planets else 'empty'}",
+        f"Rising style: {_RISING_TONE.get(chart.lagna.rashi_name, '')}",
+        f"Moon feeling style: {_MOON_TONE.get(moon.info.rashi_name, '')}",
     ]
+    _, _, _, mang_lines = _manglik_fact_lines(chart)
+    lines.extend(mang_lines)
     for name in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"):
         pl = chart.planets[name]
-        lines.append(f"{name}: {pl.info.rashi_name}, house {pl.house}")
+        lines.append(
+            f"{name}: {pl.info.rashi_name}, house {pl.house} ({_HOUSE_PLAIN.get(pl.house, '')})"
+        )
     if timeline.current_mahadasha:
         m = timeline.current_mahadasha
         lines.append(
@@ -537,10 +628,13 @@ def _normalize_life_markers(text: str) -> str:
 def _parse_life_sections(text: str) -> Dict[str, str] | None:
     text = _normalize_life_markers(text)
     found: Dict[str, str] = {}
+    required = {sid for sid, _, _ in _SECTION_ORDER if sid != "manglik"}
     for i, (sid, marker, _title) in enumerate(_SECTION_ORDER):
         tag = f"==={marker}==="
         start = text.find(tag)
         if start < 0:
+            if sid == "manglik":
+                continue
             return None
         start += len(tag)
         end = len(text)
@@ -552,8 +646,12 @@ def _parse_life_sections(text: str) -> Dict[str, str] | None:
         body = text[start:end].strip()
         body = re.sub(r"^[*#\-\d.]+\s*", "", body)
         if not body:
+            if sid == "manglik":
+                continue
             return None
         found[sid] = body
+    if not required.issubset(found):
+        return None
     return found
 
 
@@ -661,67 +759,110 @@ def _rules_life_sections(
     draft_present: str,
     draft_future: str,
 ) -> Tuple[str, List[Dict[str, str]]]:
-    """Structured plain reading without LLM — detailed, chart-aware."""
+    """Structured plain reading without LLM — chart-specific, includes Manglik."""
     name = chart.birth.name
     rising = chart.lagna.rashi_name
     moon = chart.planets["Moon"]
     sun = chart.planets["Sun"]
-    h7 = chart.houses[6].rashi_name
-    h10 = chart.houses[9].rashi_name
-    career = _CAREER_TONE.get(h10, "skilled, focused work")
-    partner = _PARTNER_TONE.get(h7, "steady and sincere")
+    mars = chart.planets["Mars"]
+    h7 = chart.houses[6]
+    h10 = chart.houses[9]
+    h12 = chart.houses[11]
+    career = _CAREER_TONE.get(h10.rashi_name, "skilled, focused work")
+    partner = _PARTNER_TONE.get(h7.rashi_name, "steady and sincere")
     rising_line = _RISING_TONE.get(rising, "shaped by your rising sign")
     moon_line = _MOON_TONE.get(moon.info.rashi_name, "your Moon colors how you feel")
+    nak_sum = _nak_summary(moon.info.nakshatra_name)
+    is_m, mitigated, mars_plain, _ = _manglik_fact_lines(chart)
     present = _plain_now_future(draft_present)
     future = _plain_now_future(draft_future)
 
+    tenth_occ = (
+        f" Right now the career area of the chart holds {', '.join(h10.planets)}, which colors how work shows up."
+        if h10.planets
+        else ""
+    )
+    seventh_occ = (
+        f" The partnership area currently holds {', '.join(h7.planets)}, which shapes marriage chemistry."
+        if h7.planets
+        else ""
+    )
+    foreign = ""
+    if h12.planets:
+        foreign = (
+            f" With {', '.join(h12.planets)} tied to foreign places or behind-the-scenes work, "
+            f"gains can also come through remote setups, travel, or research away from the spotlight."
+        )
+
     intro = (
-        f"Based on your birth chart, {name}, you have {rising} rising, with your Moon in "
-        f"{moon.info.rashi_name} under the birth star {moon.info.nakshatra_name}, and your Sun in "
-        f"{sun.info.rashi_name}. Together they set the tone for how you feel, how you show up, "
-        f"and what you quietly chase in life."
+        f"{name}, your chart has {rising} rising, Moon in {moon.info.rashi_name} "
+        f"({moon.info.nakshatra_name}, pada {moon.info.pada}), and Sun in {sun.info.rashi_name}. "
+        f"You are {'Manglik' if is_m else 'not Manglik'} "
+        f"(Mars in {mars.info.rashi_name}, tied to {_HOUSE_PLAIN.get(mars.house, 'its house')}). "
+        f"That mix sets a life tone that is personal to you — not a generic template."
     )
     personality = (
         f"With {rising} rising, you come across as {rising_line}. "
         f"Because your Moon sits in {moon.info.rashi_name}, {moon_line}. "
-        f"{moon.info.nakshatra_name} adds a structured, listening mind — you respect knowledge and "
-        f"feel calmer when you are learning or making real progress. You rarely open up all at once; "
-        f"trust and results matter more than big emotional displays."
+        + (
+            f"Your birth star {moon.info.nakshatra_name} points to this: {nak_sum} "
+            if nak_sum
+            else f"{moon.info.nakshatra_name} flavors how your mind seeks peace and progress. "
+        )
+        + "You open up on your own timeline; trust and lived proof matter more than big emotional displays."
     )
     career_body = (
-        f"Your career pattern points toward {career}. Work that uses clear thinking, communication, "
-        f"or careful craft tends to fit you better than purely impulsive paths. Money usually grows "
-        f"when you build authority in your own skill — branding, leadership, or specialist roles — "
-        f"and sometimes through work away from home, remote setups, or tech-heavy environments. "
-        f"Steady effort beats flashy shortcuts for your chart."
+        f"Work that fits your chart leans toward {career}.{tenth_occ} "
+        f"Money tends to grow when you own a clear skill and build reputation in that lane, "
+        f"not only from quick wins.{foreign}"
     )
     relationships = (
-        f"In partnership, you are drawn to someone who is {partner}. "
-        f"Expectations work best when they stay realistic: emotional ease and true alignment often "
-        f"deepen in the late twenties and early thirties, once maturity and trust catch up with attraction. "
-        f"A serious, long-term tone serves you better than rushed romance."
+        f"In partnership you are drawn to someone who is {partner}.{seventh_occ} "
+        f"Marriage tone follows your chart's 7th-sign flavor — talk honestly about pace, family, and space "
+        f"before locking big commitments. Emotional ease deepens when both people feel respected, not managed."
     )
+    if is_m:
+        manglik_body = (
+            f"Yes — this chart is Manglik: {mars_plain}. "
+            f"In everyday terms that often means more heat in will, courage, and temper, especially around "
+            f"marriage timing and early married years. "
+            + (
+                "Venus/Jupiter support softens the edge, so the flag is real but not as harsh as textbooks scare. "
+                if mitigated
+                else "Cool-down habits and patient timing matter more than panic. "
+            )
+            + "Treat Manglik as a pace-and-temper note, not a verdict on your worth."
+        )
+    else:
+        manglik_body = (
+            f"No — this chart is not Manglik. {mars_plain}, which sits outside the classic Manglik houses "
+            f"(self, home, marriage, intensity, or foreign/hidden zones). "
+            f"Mars still gives drive, but you do not carry the classic Manglik marriage flag."
+        )
     now = (
-        f"In this chapter of life: {present}. "
-        f"It is a useful window to sharpen skills, claim financial independence, and make clearer choices "
-        f"about work and relationships — without forcing every answer overnight."
+        f"In this chapter: {present}. "
+        f"Use it to make concrete choices on work and relationships that match how your chart actually behaves."
     )
     ahead = (
         f"Looking ahead: {future}. "
-        f"Near term, keep learning and stay open to a career shift or deeper specialization; "
-        f"mid-term, patience and skill-building tend to open stronger doors. "
-        f"Love and home themes settle when you choose stability over drama and let trust grow in real time."
+        + (
+            "If Manglik heat has felt loud, it usually eases with maturity and steadier partnership habits. "
+            if is_m
+            else ""
+        )
+        + "Keep building the skills your career lane rewards, and let love grow through consistent behaviour."
     )
     section_map = {
         "intro": intro,
         "personality": personality,
         "career": career_body,
         "relationships": relationships,
+        "manglik": manglik_body,
         "now": now,
         "future": ahead,
     }
     _ = draft_past
-    headline = f"{name} — a clear reading of your life path"
+    headline = f"{name} — {rising} rising · {'Manglik' if is_m else 'not Manglik'}"
     return headline, _sections_from_map(section_map)
 
 
@@ -735,34 +876,36 @@ def life_predictive_summary(
 ) -> Tuple[str, List[Dict[str, str]], str]:
     """
     Return (headline, sections[{id,title,body}], source).
-    Structured deep-dive: intro, personality, career, relationships, now, future.
+    Structured deep-dive including Manglik.
     """
     facts = _life_chart_facts(chart, timeline, draft_past, draft_present, draft_future)
-    h7 = chart.houses[6].rashi_name
-    h10 = chart.houses[9].rashi_name
-    facts += (
-        f"\nCareer fields that fit 10th-sign tone: {_CAREER_TONE.get(h10, 'skilled work')}"
-        f"\nPartner tone from 7th-sign: {_PARTNER_TONE.get(h7, 'steady')}"
-        f"\nRising emotional style: {_RISING_TONE.get(chart.lagna.rashi_name, '')}"
-        f"\nMoon feeling style: {_MOON_TONE.get(chart.planets['Moon'].info.rashi_name, '')}"
-    )
-    user = f"Write the structured life deep-dive from these chart facts:\n\n{facts}"
-    llm = _call_llm(_LIFE_SYSTEM, user, max_tokens=1600, timeout=100)
+    user = "Write the structured life deep-dive from these chart facts:\n\n" + facts
+    llm = _call_llm(_LIFE_SYSTEM, user, max_tokens=1700, timeout=100)
     if not llm:
-        # Free-tier providers sometimes drop the first long call — one quiet retry
-        llm = _call_llm(_LIFE_SYSTEM, user, max_tokens=1400, timeout=100)
+        llm = _call_llm(_LIFE_SYSTEM, user, max_tokens=1500, timeout=100)
     if llm:
         parsed = _parse_life_sections(llm)
         if parsed:
-            # If FUTURE was cut by token limit, finish from rules prose
-            if len(parsed.get("future", "")) < 120:
-                _, rules_secs = _rules_life_sections(
-                    chart, draft_past, draft_present, draft_future
-                )
-                rules_future = next((s["body"] for s in rules_secs if s["id"] == "future"), "")
-                if rules_future:
-                    parsed["future"] = (parsed.get("future", "").rstrip() + " " + rules_future).strip()
-            headline = f"{chart.birth.name} — your chart, in clear words"
+            _, rules_secs = _rules_life_sections(
+                chart, draft_past, draft_present, draft_future
+            )
+            rules_map = {s["id"]: s["body"] for s in rules_secs}
+            if len(parsed.get("future", "")) < 120 and rules_map.get("future"):
+                parsed["future"] = (
+                    parsed.get("future", "").rstrip() + " " + rules_map["future"]
+                ).strip()
+            if "manglik" not in parsed or len(parsed.get("manglik", "")) < 60:
+                parsed["manglik"] = rules_map.get("manglik", parsed.get("manglik", ""))
+            mang_body = parsed.get("manglik", "")
+            is_m, _, _, _ = _manglik_fact_lines(chart)
+            if is_m and "not Manglik" in mang_body and "is Manglik" not in mang_body:
+                parsed["manglik"] = rules_map["manglik"]
+            if (not is_m) and re.search(r"\bYes\b.*\bManglik\b", mang_body, re.I):
+                parsed["manglik"] = rules_map["manglik"]
+            headline = (
+                f"{chart.birth.name} — {chart.lagna.rashi_name} rising · "
+                f"{'Manglik' if is_m else 'not Manglik'}"
+            )
             first = parsed["intro"].split(".")[0].strip()
             if 20 < len(first) < 110:
                 headline = first

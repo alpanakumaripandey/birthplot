@@ -9,7 +9,7 @@ from kundli.chart import HouseInfo, KundliChart
 from kundli.dasha import DashaPeriod, DashaTimeline, _antardashas
 from kundli.simple_summary import life_predictive_summary
 
-CONTENT_VERSION = "life-llm-v4"
+CONTENT_VERSION = "life-llm-v5"
 
 SIGN_LORD = {
     "Aries": "Mars",

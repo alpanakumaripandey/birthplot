@@ -8,7 +8,7 @@ import { useLingo } from '../hooks/useLingo'
 import { useReveal } from '../hooks/useReveal'
 import type { LifeSummaryItem } from '../types'
 
-const CURRENT = 'life-llm-v4'
+const CURRENT = 'life-llm-v5'
 
 function pickReading(items: LifeSummaryItem[] | undefined): LifeSummaryItem | undefined {
   const list = items ?? []
