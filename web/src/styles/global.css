@@ -691,10 +691,32 @@ select {
 
 .ask-answer {
   margin-top: var(--space-4);
-  white-space: pre-wrap;
   padding: var(--space-4);
   background: var(--surface);
   border-top: 3px solid var(--jade);
+}
+
+.ask-answer-head {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.65rem;
+}
+
+.ask-topic-label {
+  margin: 0;
+  font-weight: 600;
+  color: var(--jade);
+}
+
+.ask-answer-body {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: var(--ink);
+  max-width: 44rem;
 }
 
 .topic-pills {

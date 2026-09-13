@@ -16,7 +16,7 @@ from kundli.dasha import compute_vimshottari
 from kundli.knowledge_loader import houses, nakshatras, planets, rashis, topics
 from kundli.matching import match_charts
 from kundli.qa import answer_question, list_topics_help
-from kundli.simple_summary import match_simple_summary
+from kundli.simple_summary import ask_plain_answer, match_simple_summary
 from api.serialize import build_full_report
 
 
@@ -149,11 +149,19 @@ def ask(body: AskRequest) -> Dict[str, Any]:
     try:
         chart = build_chart(birth)
         timeline = compute_vimshottari(chart)
-        answer, topic = answer_question(chart, timeline, body.question)
+        rule_answer, topic = answer_question(chart, timeline, body.question)
+        answer, source = ask_plain_answer(
+            chart=chart,
+            timeline=timeline,
+            question=body.question,
+            topic=topic,
+            rule_answer=rule_answer,
+        )
         return {
             "question": body.question,
             "topic": topic,
             "answer": answer,
+            "answer_source": source,
             "help": list_topics_help() if topic is None else None,
         }
     except ValueError as exc:

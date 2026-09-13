@@ -233,9 +233,14 @@ export const COPY = {
   },
   askTitle: { funky: 'Plot se poochho', seedha: 'Ask a question', sick: 'Ask the plot' },
   askLede: {
-    funky: 'Bade topic tiles pehle. Custom sawaal? Type maar, off-menu chalo.',
-    seedha: 'Choose a topic or type your own question.',
-    sick: 'Big topic tiles first. Custom Q? Type it — go off-menu.',
+    funky: 'Topic chuno ya sawaal likho — seedhi zubaan mein jawab, AI polish jab key ho.',
+    seedha: 'Pick a topic or type a question. Answers come in plain everyday language.',
+    sick: 'Pick a topic or type it — plain-English answer, AI polish when the key is on.',
+  },
+  askAiBadge: {
+    funky: 'AI polish',
+    seedha: 'AI summary',
+    sick: 'AI wrote this',
   },
   lexiconTitle: {
     funky: 'Lexicon — cast se milo',

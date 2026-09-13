@@ -138,6 +138,7 @@ export type AskResponse = {
   question: string
   topic: string | null
   answer: string
+  answer_source?: 'llm' | 'rules'
   help: string | null
 }
 

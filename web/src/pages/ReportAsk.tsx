@@ -36,6 +36,7 @@ export function ReportAsk() {
   const [searchParams] = useSearchParams()
   const [q, setQ] = useState('')
   const [answer, setAnswer] = useState<string | null>(null)
+  const [answerSource, setAnswerSource] = useState<'llm' | 'rules' | null>(null)
   const [help, setHelp] = useState<string | null>(null)
   const [topic, setTopic] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -53,12 +54,14 @@ export function ReportAsk() {
       setLoading(true)
       setError(null)
       setAnswer(null)
+      setAnswerSource(null)
       setHelp(null)
       setTopic(null)
       setQ(trimmed)
       try {
         const res = await askQuestion(birthRequest, trimmed)
         setAnswer(formatAnswer(res.answer))
+        setAnswerSource(res.answer_source ?? 'rules')
         setTopic(res.topic)
         setHelp(res.help)
       } catch (err) {
@@ -129,12 +132,17 @@ export function ReportAsk() {
 
           {answer && (
             <div className="ask-answer slide-in">
-              {topic && (
-                <p style={{ fontWeight: 600, color: 'var(--jade)' }}>
-                  {t('askTopic')}: {topic}
-                </p>
-              )}
-              {answer}
+              <div className="ask-answer-head">
+                {topic ? (
+                  <p className="ask-topic-label">
+                    {t('askTopic')}: {topic}
+                  </p>
+                ) : null}
+                {answerSource === 'llm' ? (
+                  <span className="match-simple-badge">{t('askAiBadge')}</span>
+                ) : null}
+              </div>
+              <div className="ask-answer-body">{answer}</div>
             </div>
           )}
         </div>
